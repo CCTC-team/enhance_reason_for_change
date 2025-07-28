@@ -1,0 +1,73 @@
+{
+  "name": "Enhance reason for change",
+  "description": "Module that allows some configuration for the built-in reason for change process",
+  "namespace": "CCTC\\EnhanceReasonForChangeModule",
+  "framework-version": 14,
+  "authors": [
+    {
+      "name": "Richard Hardy",
+      "email": "rmh54@cam.ac.uk",
+      "institution": "University of Cambridge - Cambridge Cancer Trials Centre"
+    }
+  ],
+  "links": {
+  },
+  "system-settings": [
+    {
+      "key": "enlarge-reason-text-capacity",
+      "name": "When checked, the text capacity in the reason for change free text box changes from 200 to 5000 characters",
+      "type": "checkbox",
+      "repeatable": false,
+      "required": false,
+      "super-users-only": true
+    },
+    {
+      "key": "sys-reason-for-change-option",
+      "name": "Provides a default option for the reason for change dropdown",
+      "type": "text",
+      "repeatable": true,
+      "required": false,
+      "super-users-only": true
+    }
+  ],
+  "project-settings": [
+    {
+      "key": "provide-reasons-for-change-dropdown",
+      "name": "When checked, a dropdown of reasons for change will be available for the user to select from",
+      "type": "checkbox",
+      "repeatable": false,
+      "required": false,
+      "super-users-only": true
+    },
+    {
+      "key": "reason-for-change-option",
+      "name": "Provide an option for the reason for change dropdown",
+      "type": "text",
+      "repeatable": true,
+      "required": false,
+      "super-users-only": true
+    },
+    {
+      "key": "highlight-field-when-changed",
+      "name": "When checked, any change to a field will highlight its row's right border. Direct changes are handled, as are indirect changes resulting from the 'mark field' dialogue or changes to a date time via a datetime picker",
+      "type": "checkbox",
+      "repeatable": false,
+      "required": false,
+      "super-users-only": true
+    },
+    {
+      "key": "highlight-field-when-changed-style",
+      "name": "The style to apply to the highlight border e.g. solid 2px red (default), or dashed 4px blue. Invalid values will not display a border",
+      "type": "text",
+      "repeatable": false,
+      "required": false,
+      "super-users-only": true
+    }
+  ],
+  "compatibility": {
+    "php-version-min": "8.0.27",
+    "php-version-max": "",
+    "redcap-version-min": "13.8.1",
+    "redcap-version-max": ""
+  }
+}
