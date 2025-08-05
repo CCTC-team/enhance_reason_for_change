@@ -88,7 +88,7 @@ EOT;
     {
         if (array_key_exists("provide-reasons-for-change-dropdown", $settings) && array_key_exists("highlight-field-when-changed", $settings)) {
             if(empty($settings['provide-reasons-for-change-dropdown']) && empty($settings['highlight-field-when-changed'])) {
-                return "Please ensure atleast one Enhance Reason For Change External Module setting is configured.";
+                return "Please ensure at least one Enhance Reason For Change External Module setting is configured.";
             }
         }
 
@@ -343,7 +343,7 @@ if(changeDialog) {
 
         if (!$shouldHighlight && !$provideReasonsForChange) {
             echo "<script type='text/javascript'>
-                    alert('Please ensure atleast one Enhance Reason For Change External Module setting is configured.');
+                    alert('Please ensure at least one Enhance Reason For Change External Module setting is configured.');
                 </script>";
             return;
         }
