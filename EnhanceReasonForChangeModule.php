@@ -9,8 +9,6 @@ use REDCap;
 
 class EnhanceReasonForChangeModule extends AbstractExternalModule
 {
-
-
     //<div><textarea id="change_reason" onblur="charLimit('change_reason',200);" class="x-form-textarea x-form-field" style="width:400px;height:120px;">Some reason</textarea></div>
 
     const FilePath = APP_PATH_DOCROOT . "/DataEntry/index.php";
@@ -88,17 +86,20 @@ EOT;
     //this is used to validate settings when saved - can be used to change the file contents for char limit
     public function validateSettings($settings) :?string
     {
+        if (array_key_exists("provide-reasons-for-change-dropdown", $settings) && array_key_exists("highlight-field-when-changed", $settings)) {
+            if(empty($settings['provide-reasons-for-change-dropdown']) && empty($settings['highlight-field-when-changed'])) {
+                return "Please ensure atleast one Enhance Reason For Change External Module setting is configured.";
+            }
+        }
+
         if (array_key_exists("enlarge-reason-text-capacity", $settings)) {
 
             //NOTE: system settings
-
             //update the code depending on system setting
             $this->applyTextCapacityChange($settings);
             $reasonForChangeOptions = $settings["sys-reason-for-change-option"];
             $this->applyDefaultReasonForChangeDropdown($reasonForChangeOptions);
         }
-
-        //no changes required for a project setting change
 
         //do not return an error here if the replace process fails as the user can never resolve that
         //without resorting to a code change
@@ -332,11 +333,66 @@ if(changeDialog) {
 
         if (empty($project_id)) return;
 
-        //check if project uses reason for change and return if not
-        if($Proj->project['require_change_reason'] != 1) return;
-
         //only implement this when highlighting fields
         $shouldHighlight = $this->getProjectSetting("highlight-field-when-changed");
+        $provideReasonsForChange = $this->getProjectSetting("provide-reasons-for-change-dropdown");
+        $projReasons = $this->getProjectSetting("reason-for-change-option");
+        $reasonForChangeOptions = $this->getSystemSetting("sys-reason-for-change-option");
+        $proReasonForChangeOptionsEmpty = 0;
+        $sysReasonForChangeOptionsEmpty= 0;
+
+        if (!$shouldHighlight && !$provideReasonsForChange) {
+            echo "<script type='text/javascript'>
+                    alert('Please ensure atleast one Enhance Reason For Change External Module setting is configured.');
+                </script>";
+            return;
+        }
+
+        if ($provideReasonsForChange) {
+            if($Proj->project['require_change_reason'] != 1) {
+                echo "<script type='text/javascript'>
+                        alert('Please ensure require a reason for change is enabled in Additional Customizations in Project Setup.');
+                    </script>";
+                return;
+            }
+        }
+
+        // check if system reasons for change options are empty
+        if($reasonForChangeOptions && is_array($reasonForChangeOptions) && count($reasonForChangeOptions) > 0) {
+            //check if the options are all empty
+            $allEmpty = true;
+            foreach ($reasonForChangeOptions as $option) {
+                if (!empty($option)) {
+                    $allEmpty = false;
+                    break;
+                }
+            }
+            if ($allEmpty)
+                $sysReasonForChangeOptionsEmpty = 1;
+        }
+
+        // check if project reasons for change options are empty
+        if($projReasons && is_array($projReasons) && count($projReasons) > 0) {
+            //check if the options are all empty
+            $allEmpty = true;
+            foreach ($projReasons as $option) {
+                if (!empty($option)) {
+                    $allEmpty = false;
+                    break;
+                }
+            }
+            if ($allEmpty)
+                $proReasonForChangeOptionsEmpty = 1;
+        }
+
+        //if Reason for change is enabled and options (either in system or project level) are not configured
+        if(($provideReasonsForChange) && ($proReasonForChangeOptionsEmpty) && ($sysReasonForChangeOptionsEmpty))  {
+            echo "<script type='text/javascript'>
+                alert('Please configure the Reason for Change options.');
+                </script>";
+            return;
+        }
+
         if($shouldHighlight) {
             $style = $this->getProjectSetting("highlight-field-when-changed-style");
             $highlightStyle = $style ?? 'solid 2px red';
@@ -454,18 +510,3 @@ if(changeDialog) {
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
