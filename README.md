@@ -23,6 +23,8 @@ The inserted code is surrounded by a comment so should be easily found;
 Disabling the module at a system level will AUTOMATICALLY remove the inserted code and revert the character input
 length using the system hook `redcap_module_system_disable`.
 
+When a new version of the module becomes available, it is recommended to disable and then re-enable the module from the Control Center.
+
 ##### System level configuration
 
 - `enlarge-reason-text-capacity` - changes the default maximum characters allowed in the 'reason for change' text entry
