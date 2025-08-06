@@ -23,7 +23,7 @@ The inserted code is surrounded by a comment so should be easily found;
 Disabling the module at a system level will AUTOMATICALLY remove the inserted code and revert the character input
 length using the system hook `redcap_module_system_disable`.
 
-When a new version of the module becomes available, it should be disabled and then re-enabled from the Control Center. Failure to do so may result in the module to malfunction.
+When a new version of the module becomes available, the module should be disabled and then re-enabled from the Control Center at the system level. Failure to do so may cause the module to malfunction.
 
 ##### System level configuration
 
