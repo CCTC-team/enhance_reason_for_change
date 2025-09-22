@@ -35,9 +35,12 @@ EOT;
         $file_contents = file_get_contents(self::FilePath);
 
         $countOfFromCode = substr_count($file_contents, $from);
+        $countOfToCode = substr_count($file_contents, $to);
         if ($countOfFromCode == 1) {
             $modified_contents = str_replace($from, $to, $file_contents);
             file_put_contents(self::FilePath, $modified_contents);
+        } else if ($countOfToCode == 1) {
+            return; //already replaced so nothing to do
         } else {
             $mess = "Failed to replace the character limit code. Trying to find: $from and got a count of: $countOfFromCode when expecting count of 1";
             $this->log($mess);
@@ -66,7 +69,7 @@ EOT;
         //set here with default-reason-for-change-option options as given in system settings
         //NOTE: these may be added to per project
         $reasonForChangeOptions = $this->getSystemSetting("sys-reason-for-change-option");
-        $this->applyDefaultReasonForChangeDropdown($reasonForChangeOptions);
+        $this->applyDefaultReasonForChangeDropdown($reasonForChangeOptions, true);
     }
 
     function redcap_module_system_disable($version): void
@@ -96,9 +99,9 @@ EOT;
 
             //NOTE: system settings
             //update the code depending on system setting
-            $this->applyTextCapacityChange($settings);
+            $this->applyTextCapacityChange($settings['enlarge-reason-text-capacity']);
             $reasonForChangeOptions = $settings["sys-reason-for-change-option"];
-            $this->applyDefaultReasonForChangeDropdown($reasonForChangeOptions);
+            $this->applyDefaultReasonForChangeDropdown($reasonForChangeOptions, false);
         }
 
         //do not return an error here if the replace process fails as the user can never resolve that
@@ -184,7 +187,7 @@ $jsToUpdateChangeReason
 <!-- ****** end of insert ****** -->" . PHP_EOL;
     }
 
-    function applyDefaultReasonForChangeDropdown($reasonForChangeOptions): void
+    function applyDefaultReasonForChangeDropdown($reasonForChangeOptions, $empty): void
     {
         //use the db system settings to remove the existing code
         //then build the new code from given options
@@ -192,9 +195,9 @@ $jsToUpdateChangeReason
         //get from db and build existing code
         $oldReasonForChangeOptions = $this->getSystemSetting("sys-reason-for-change-option");
         $oldCode = $this->makeInsertCode($oldReasonForChangeOptions);
-
-        //always remove first
-        $this->removeCode($oldCode);
+        // remove first if not empty
+        if(!$empty)
+            $this->removeCode($oldCode);
 
         //build new code and apply from new settings
         $newCode = $this->makeInsertCode($reasonForChangeOptions);
