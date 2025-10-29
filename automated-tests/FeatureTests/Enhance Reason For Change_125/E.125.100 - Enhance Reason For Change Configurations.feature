@@ -15,11 +15,11 @@ Feature: E.125.100 - The system shall support the ability to enable/disable Enha
 
     Given I click on the link labeled exactly "Manage"
     Then I should see "External Modules - Module Manager"
-    And I should NOT see "Enhance reason for change - v0.0.0"
+    And I should NOT see "Enhance reason for change - v1.0.0"
     When I click on the button labeled "Enable a module"
     And I click on the button labeled Enable for the external module named "Enhance reason for change"
     And I click on the button labeled "Enable" in the dialog box
-    Then I should see "Enhance reason for change - v0.0.0"
+    Then I should see "Enhance reason for change - v1.0.0"
     And I logout
     
     Given I login to REDCap with the user "Test_User1"
@@ -32,12 +32,12 @@ Feature: E.125.100 - The system shall support the ability to enable/disable Enha
     When I click on the link labeled "Control Center"
     And I click on the link labeled exactly "Manage"
     Then I should see "External Modules - Module Manager"
-    And I should see "Enhance reason for change - v0.0.0"
+    And I should see "Enhance reason for change - v1.0.0"
     And I should NOT see "Enabled for All Projects"
     When I click on the button labeled exactly "Configure"
     And I check the checkbox labeled "Enable module on all projects by default"
     And I click on the button labeled "Save"
-    Then I should see "Enhance reason for change - v0.0.0"
+    Then I should see "Enhance reason for change - v1.0.0"
     And I should see "Enabled for All Projects"
     And I logout
     
@@ -45,7 +45,7 @@ Feature: E.125.100 - The system shall support the ability to enable/disable Enha
     When I create a new project named "E.125.100.200" by clicking on "New Project" in the menu bar, selecting "Practice / Just for fun" from the dropdown, choosing file "redcap_val/Project_redcap_val_nodata.xml", and clicking the "Create Project" button
     And I click on the link labeled exactly "Manage"
     Then I should see "External Modules - Project Module Manager"
-    And I should see "Enhance reason for change - v0.0.0"
+    And I should see "Enhance reason for change - v1.0.0"
     And I should see "Enabled for All Projects"
     And I logout
 
@@ -54,14 +54,14 @@ Feature: E.125.100 - The system shall support the ability to enable/disable Enha
     When I click on the link labeled "Control Center"
     And I click on the link labeled exactly "Manage"
     Then I should see "External Modules - Module Manager"
-    And I should see "Enhance reason for change - v0.0.0"
+    And I should see "Enhance reason for change - v1.0.0"
     And I should see "Enabled for All Projects"
     And I should NOT see "Discoverable"
     When I click on the button labeled exactly "Configure"
     And I uncheck the checkbox labeled "Enable module on all projects by default"
     And I check the checkbox labeled "Make module discoverable by users"
     And I click on the button labeled "Save"
-    Then I should see "Enhance reason for change - v0.0.0"
+    Then I should see "Enhance reason for change - v1.0.0"
     And I should NOT see "Enabled for All Projects"
     And I should see "Discoverable"
     And I logout
@@ -70,19 +70,19 @@ Feature: E.125.100 - The system shall support the ability to enable/disable Enha
     When I create a new project named "E.125.100.300" by clicking on "New Project" in the menu bar, selecting "Practice / Just for fun" from the dropdown, choosing file "redcap_val/Project_redcap_val_nodata.xml", and clicking the "Create Project" button
     And I click on the link labeled exactly "Manage"
     Then I should see "External Modules - Project Module Manager"
-    And I should NOT see "Enhance reason for change - v0.0.0"
+    And I should NOT see "Enhance reason for change - v1.0.0"
 
     When I click on the button labeled "View available modules"
-    Then I should see "Enhance reason for change - v0.0.0"
+    Then I should see "Enhance reason for change - v1.0.0"
     And I should see "Discoverable"
     And I should NOT see "Activation request is pending"
     When I click on the button labeled Request Activation for the external module named "Enhance reason for change"
     Then I should see "SUCCESS" in the dialog box
     And I click on the button labeled "Close" in the dialog box
-    And I should NOT see "Enhance reason for change - v0.0.0"
+    And I should NOT see "Enhance reason for change - v1.0.0"
 
     When I click on the button labeled "View available modules"
-    Then I should see "Enhance reason for change - v0.0.0"
+    Then I should see "Enhance reason for change - v1.0.0"
     And I should see "Discoverable"
     And I should see "Activation request is pending"
     And I logout
@@ -109,7 +109,7 @@ Feature: E.125.100 - The system shall support the ability to enable/disable Enha
     # And I click on the link labeled "E.125.100.300"
     # And I click on the link labeled exactly "Manage"
     # Then I should see "External Modules - Project Module Manager"
-    # And I should see "Enhance reason for change - v0.0.0"
+    # And I should see "Enhance reason for change - v1.0.0"
     # And I should see "Discoverable"
     # And I logout
 
@@ -118,12 +118,12 @@ Feature: E.125.100 - The system shall support the ability to enable/disable Enha
     When I click on the link labeled "Control Center"   
     And I click on the link labeled exactly "Manage"
     Then I should see "External Modules - Module Manager"
-    And I should see "Enhance reason for change - v0.0.0"
+    And I should see "Enhance reason for change - v1.0.0"
     And I should see "Discoverable"
     When I click on the button labeled exactly "Configure"
     And I check the checkbox labeled "Allow non-admins to enable this module on projects"
     And I click on the button labeled "Save"
-    Then I should see "Enhance reason for change - v0.0.0"
+    Then I should see "Enhance reason for change - v1.0.0"
     And I should see "Discoverable"
     And I logout
     
@@ -131,13 +131,13 @@ Feature: E.125.100 - The system shall support the ability to enable/disable Enha
     When I create a new project named "E.125.100.400" by clicking on "New Project" in the menu bar, selecting "Practice / Just for fun" from the dropdown, choosing file "redcap_val/Project_redcap_val_nodata.xml", and clicking the "Create Project" button
     And I click on the link labeled exactly "Manage"
     Then I should see "External Modules - Project Module Manager"
-    And I should NOT see "Enhance reason for change - v0.0.0"
+    And I should NOT see "Enhance reason for change - v1.0.0"
 
     When I click on the button labeled "View available modules"
-    Then I should see "Enhance reason for change - v0.0.0"
+    Then I should see "Enhance reason for change - v1.0.0"
     And I should see "Discoverable"
-    And I click on the button labeled Enable for the external module named "Enhance reason for change - v0.0.0"
-    Then I should see "Enhance reason for change - v0.0.0"
+    And I click on the button labeled Enable for the external module named "Enhance reason for change - v1.0.0"
+    Then I should see "Enhance reason for change - v1.0.0"
     And I logout
 
   Scenario: E.125.500 - Hide this module from non-admins in the list of enabled modules on each project
@@ -145,14 +145,14 @@ Feature: E.125.100 - The system shall support the ability to enable/disable Enha
     Given I login to REDCap with the user "Test_Admin"
     When I click on the link labeled "Control Center"
     And I click on the link labeled exactly "Manage"
-    Then I should see "Enhance reason for change - v0.0.0"
+    Then I should see "Enhance reason for change - v1.0.0"
     And I should see "Discoverable"
     When I click on the button labeled exactly "Configure"
     And I uncheck the checkbox labeled "Make module discoverable by users"
     And I uncheck the checkbox labeled "Allow non-admins to enable this module on projects"
     And I check the checkbox labeled "Hide this module from non-admins in the list of enabled modules on each project"
     And I click on the button labeled "Save"
-    Then I should see "Enhance reason for change - v0.0.0"
+    Then I should see "Enhance reason for change - v1.0.0"
     And I should NOT see "Discoverable"
   
     When I create a new project named "E.125.100.500" by clicking on "New Project" in the menu bar, selecting "Practice / Just for fun" from the dropdown, choosing file "redcap_val/Project_redcap_val_nodata.xml", and clicking the "Create Project" button
@@ -161,8 +161,8 @@ Feature: E.125.100 - The system shall support the ability to enable/disable Enha
     And I click on the link labeled exactly "Manage"
     Then I should see "External Modules - Project Module Manager"
     When I click on the button labeled "Enable a module"
-    And I click on the button labeled Enable for the external module named "Enhance reason for change - v0.0.0"
-    Then I should see "Enhance reason for change - v0.0.0"
+    And I click on the button labeled Enable for the external module named "Enhance reason for change - v1.0.0"
+    Then I should see "Enhance reason for change - v1.0.0"
 
     # Add User Test_User1 with Project Setup & Design User Rights
     When I click on the link labeled "User Rights"
@@ -178,18 +178,18 @@ Feature: E.125.100 - The system shall support the ability to enable/disable Enha
     And I click on the link labeled "E.125.100.500"
     And I click on the link labeled exactly "Manage"
     Then I should see "External Modules - Project Module Manager"
-    And I should NOT see "Enhance reason for change - v0.0.0"
+    And I should NOT see "Enhance reason for change - v1.0.0"
     And I logout
 
     # Disable 'Hide this module from non-admins in the list of enabled modules on each project'
     Given I login to REDCap with the user "Test_Admin"
     When I click on the link labeled "Control Center"
     And I click on the link labeled exactly "Manage"
-    Then I should see "Enhance reason for change - v0.0.0"
+    Then I should see "Enhance reason for change - v1.0.0"
     When I click on the button labeled exactly "Configure"
     And I uncheck the checkbox labeled "Hide this module from non-admins in the list of enabled modules on each project"
     And I click on the button labeled "Save"
-    Then I should see "Enhance reason for change - v0.0.0"
+    Then I should see "Enhance reason for change - v1.0.0"
     And I logout
 
     Given I login to REDCap with the user "Test_User1"
@@ -197,7 +197,7 @@ Feature: E.125.100 - The system shall support the ability to enable/disable Enha
     And I click on the link labeled "E.125.100.500"
     And I click on the link labeled exactly "Manage"
     Then I should see "External Modules - Project Module Manager"
-    And I should see "Enhance reason for change - v0.0.0"
+    And I should see "Enhance reason for change - v1.0.0"
     And I logout
 
     # Enable from project - 'Hide this module from non-admins in the list of enabled modules on each project'
@@ -206,11 +206,12 @@ Feature: E.125.100 - The system shall support the ability to enable/disable Enha
     And I click on the link labeled "E.125.100.500"
     And I click on the link labeled exactly "Manage"
     Then I should see "External Modules - Project Module Manager"
-    Then I should see "Enhance reason for change - v0.0.0"
+    Then I should see "Enhance reason for change - v1.0.0"
     When I click on the button labeled exactly "Configure"
     And I check the checkbox labeled "Hide this module from non-admins in the list of enabled modules on this project"
+    And I check the checkbox labeled "When checked, any change to a field will highlight its row's right border" in the dialog box
     And I click on the button labeled "Save"
-    Then I should see "Enhance reason for change - v0.0.0"
+    Then I should see "Enhance reason for change - v1.0.0"
     And I logout
 
     Given I login to REDCap with the user "Test_User1"
@@ -218,7 +219,7 @@ Feature: E.125.100 - The system shall support the ability to enable/disable Enha
     And I click on the link labeled "E.125.100.500"
     And I click on the link labeled exactly "Manage"
     Then I should see "External Modules - Project Module Manager"
-    And I should NOT see "Enhance reason for change - v0.0.0"
+    And I should NOT see "Enhance reason for change - v1.0.0"
     And I logout
 
   Scenario: Module configuration permissions in projects
@@ -227,11 +228,11 @@ Feature: E.125.100 - The system shall support the ability to enable/disable Enha
     When I click on the link labeled "Control Center"
     And I click on the link labeled exactly "Manage"
     Then I should see "External Modules - Module Manager"
-    And I should see "Enhance reason for change - v0.0.0"
+    And I should see "Enhance reason for change - v1.0.0"
     When I click on the button labeled exactly "Configure"
     Then I should see the dropdown field labeled "Module configuration permissions in projects" with the option "Require Project Setup/Design privilege" selected
     And I click on the button labeled "Save"
-    Then I should see "Enhance reason for change - v0.0.0"
+    Then I should see "Enhance reason for change - v1.0.0"
 
     When I create a new project named "E.125.100.600" by clicking on "New Project" in the menu bar, selecting "Practice / Just for fun" from the dropdown, choosing file "redcap_val/Project_redcap_val_nodata.xml", and clicking the "Create Project" button
 
@@ -239,8 +240,8 @@ Feature: E.125.100 - The system shall support the ability to enable/disable Enha
     And I click on the link labeled exactly "Manage"
     Then I should see "External Modules - Project Module Manager"
     When I click on the button labeled "Enable a module"
-    And I click on the button labeled Enable for the external module named "Enhance reason for change - v0.0.0"
-    Then I should see "Enhance reason for change - v0.0.0"
+    And I click on the button labeled Enable for the external module named "Enhance reason for change - v1.0.0"
+    Then I should see "Enhance reason for change - v1.0.0"
 
     #VERIFY
     When I click on the link labeled "User Rights"
@@ -255,11 +256,11 @@ Feature: E.125.100 - The system shall support the ability to enable/disable Enha
     When I click on the link labeled "Control Center"
     And I click on the link labeled exactly "Manage"
     Then I should see "External Modules - Module Manager"
-    And I should see "Enhance reason for change - v0.0.0"
+    And I should see "Enhance reason for change - v1.0.0"
     When I click on the button labeled exactly "Configure"
     And I select "Require module-specific user privilege" on the dropdown field labeled "Module configuration permissions in projects"
     And I click on the button labeled "Save"
-    Then I should see "Enhance reason for change - v0.0.0"
+    Then I should see "Enhance reason for change - v1.0.0"
 
     When I click on the link labeled "My Projects"
     And I click on the link labeled "E.125.100.600"
@@ -277,7 +278,7 @@ Feature: E.125.100 - The system shall support the ability to enable/disable Enha
   Scenario: E.125.600 - View Usage of the external module
     When I click on the link labeled "Control Center"
     And I click on the link labeled exactly "Manage"
-    Then I should see "Enhance reason for change - v0.0.0"
+    Then I should see "Enhance reason for change - v1.0.0"
     When I click on the button labeled "View Usage"
     Then I should see a link labeled "E.125.100.400" in the dialog box
     And I should see a link labeled "E.125.100.500" in the dialog box
@@ -293,38 +294,38 @@ Feature: E.125.100 - The system shall support the ability to enable/disable Enha
     # Disable external module in project E.125.100.400
     Given I click on the link labeled exactly "Manage"
     Then I should see "External Modules - Project Module Manager"
-    And I should see "Enhance reason for change - v0.0.0"
+    And I should see "Enhance reason for change - v1.0.0"
     When I click on the button labeled exactly "Disable"
     Then I should see "Disable module?" in the dialog box
     When I click on the button labeled "Disable module" in the dialog box
-    Then I should NOT see "Enhance reason for change - v0.0.0"
+    Then I should NOT see "Enhance reason for change - v1.0.0"
 
     # Disable external module in project E.125.100.500
     Given I click on the link labeled "My Projects"
     When I click on the link labeled "E.125.100.500"
     And I click on the link labeled exactly "Manage"
     Then I should see "External Modules - Project Module Manager"
-    And I should see "Enhance reason for change - v0.0.0"
+    And I should see "Enhance reason for change - v1.0.0"
     When I click on the button labeled exactly "Disable"
     Then I should see "Disable module?" in the dialog box
     When I click on the button labeled "Disable module" in the dialog box
-    Then I should NOT see "Enhance reason for change - v0.0.0"
+    Then I should NOT see "Enhance reason for change - v1.0.0"
 
     # Disable external module in project E.125.100.600
     Given I click on the link labeled "My Projects"
     When I click on the link labeled "E.125.100.600"
     And I click on the link labeled exactly "Manage"
     Then I should see "External Modules - Project Module Manager"
-    And I should see "Enhance reason for change - v0.0.0"
+    And I should see "Enhance reason for change - v1.0.0"
     When I click on the button labeled exactly "Disable"
     Then I should see "Disable module?" in the dialog box
     When I click on the button labeled "Disable module" in the dialog box
-    Then I should NOT see "Enhance reason for change - v0.0.0"
+    Then I should NOT see "Enhance reason for change - v1.0.0"
 
     # Disable external module in Control Center
     Given I click on the link labeled "Control Center"
     When I click on the link labeled exactly "Manage"
-    Then I should see "Enhance reason for change - v0.0.0"
+    Then I should see "Enhance reason for change - v1.0.0"
     When I click on the button labeled "View Usage"
     Then I should see "None" in the dialog box
     And I should NOT see "E.125.100.400" in the dialog box
@@ -334,7 +335,7 @@ Feature: E.125.100 - The system shall support the ability to enable/disable Enha
     And I click on the button labeled exactly "Disable"
     Then I should see "Disable module?" in the dialog box
     When I click on the button labeled "Disable module" in the dialog box
-    Then I should NOT see "Enhance reason for change - v0.0.0"
+    Then I should NOT see "Enhance reason for change - v1.0.0"
     And I logout
 
     # Verify no exceptions are thrown in the system
