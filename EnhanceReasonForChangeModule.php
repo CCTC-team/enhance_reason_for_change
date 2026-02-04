@@ -3,7 +3,6 @@
 namespace CCTC\EnhanceReasonForChangeModule;
 
 use ExternalModules\AbstractExternalModule;
-use PHPSQLParser\Test\Parser\unionWithParenthesisTest;
 use RCView;
 use REDCap;
 
@@ -159,7 +158,8 @@ EOT;
         $optionList = "<option value='' disabled selected>select a standard reason</option>";
         foreach ($reasonForChangeOptions as $option) {
             if ($option != null && $option != "") {
-                $optionList .= "<option value='{$option}'>{$option}</option>";
+                $escapedOption = htmlspecialchars($option, ENT_QUOTES, 'UTF-8');
+                $optionList .= "<option value=\"{$escapedOption}\">{$escapedOption}</option>";
             }
         }
 
@@ -204,13 +204,17 @@ $jsToUpdateChangeReason
         $this->insertCode(self::DropdownSearchTerm, $newCode);
     }
 
-    function js($highlightStyle): void
+    function js(string $highlightStyle): void
     {
+        // Sanitize the style to prevent XSS - only allow safe CSS characters
+        $safeStyle = preg_replace('/[^a-zA-Z0-9\s\-#.,()%]/', '', $highlightStyle);
+        $escapedStyle = htmlspecialchars($safeStyle, ENT_QUOTES, 'UTF-8');
+
         echo "
             <script type='text/javascript'>
-                                
+
                 function HandleUpdate(ele) {
-                    ele.style.borderRight = '$highlightStyle';                              
+                    ele.style.borderRight = '{$escapedStyle}';
                 }
                                 
                 // element validation type is used to determine if the field is autocomplete or not
@@ -282,13 +286,14 @@ $jsToUpdateChangeReason
         //get the project reasons and append to system list
         $projReasons = $this->getProjectSetting("reason-for-change-option");
         if($projReasons && is_array($projReasons) && count($projReasons) > 0) {
-            $quotedArray = array_map(function($item) {
-                return "'" . $item . "'";
-            }, $projReasons);
-           $reasonForChangeOptions = implode(",", $quotedArray);
+            // Filter out empty values and use json_encode for safe JS output
+            $filteredReasons = array_filter($projReasons, function($item) {
+                return $item !== null && $item !== "";
+            });
+            $reasonForChangeOptionsJson = json_encode(array_values($filteredReasons), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
 
         echo "<script type='text/javascript'>
-const reasonsForChange = [ $reasonForChangeOptions ]
+const reasonsForChange = {$reasonForChangeOptionsJson};
 let reasonForChangeOpt = document.getElementById('reason-for-change-opt');
 if(reasonForChangeOpt) {
     document.addEventListener('click', function() {
