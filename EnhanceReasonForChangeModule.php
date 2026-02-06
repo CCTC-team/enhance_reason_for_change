@@ -3,20 +3,47 @@
 namespace CCTC\EnhanceReasonForChangeModule;
 
 use ExternalModules\AbstractExternalModule;
-use RCView;
 use REDCap;
 
+/**
+ * Enhance Reason for Change External Module
+ *
+ * Provides enhanced functionality for REDCap's built-in "Require a reason when making changes" feature:
+ * - Extended text capacity (200 to 5000 characters)
+ * - Standardized dropdown reasons (system and project level)
+ * - Visual field highlighting for modified fields
+ */
 class EnhanceReasonForChangeModule extends AbstractExternalModule
 {
-    //<div><textarea id="change_reason" onblur="charLimit('change_reason',200);" class="x-form-textarea x-form-field" style="width:400px;height:120px;">Some reason</textarea></div>
+    /**
+     * Gets the path to REDCap DataEntry index file
+     * @return string
+     */
+    private function getFilePath(): string
+    {
+        return APP_PATH_DOCROOT . "/DataEntry/index.php";
+    }
 
-    const FilePath = APP_PATH_DOCROOT . "/DataEntry/index.php";
+    /** @var string Original character limit code in REDCap source */
+    private const OriginalCharLimitCode = "id=\"change_reason\" onblur=\"charLimit('change_reason',200);\"";
 
-    const OriginalCharLimitCode = "id=\"change_reason\" onblur=\"charLimit('change_reason',200);\"";
-    const ReplacedCharLimitCode = "id=\"change_reason\" onblur=\"charLimit('change_reason',5000);\"";
+    /** @var string Replaced character limit code with extended capacity */
+    private const ReplacedCharLimitCode = "id=\"change_reason\" onblur=\"charLimit('change_reason',5000);\"";
 
-    //uses Nowdoc to preserve format to prevent tabs being replaced by spaces
-    const DropdownSearchTerm = <<<'EOT'
+    /** @var int Default character limit */
+    private const DEFAULT_CHAR_LIMIT = 200;
+
+    /** @var int Extended character limit */
+    private const EXTENDED_CHAR_LIMIT = 5000;
+
+    /** @var string Default highlight style */
+    private const DEFAULT_HIGHLIGHT_STYLE = 'solid 2px red';
+
+    /**
+     * Search term for locating the change reason popup in REDCap source.
+     * Uses Nowdoc to preserve format and prevent tabs being replaced by spaces.
+     */
+    private const DropdownSearchTerm = <<<'EOT'
 		<!-- Change reason pop-up-->
 		<div id="change_reason_popup" title="data_entry_603" style="display:none;margin-bottom:25px;">
 			<p>
@@ -27,26 +54,56 @@ class EnhanceReasonForChangeModule extends AbstractExternalModule
 			</div>'
 EOT;
 
-    //replaces the char limit checking first that the replacement won't affect other instances of similar code
-    //a message is logged if the code to replace doesn't equal exactly one instance in the code file
-    function replaceCharLimit($from, $to): void
+    /**
+     * Replaces character limit code in REDCap source file
+     *
+     * Validates that exactly one instance of the search string exists before replacement
+     * to prevent unintended modifications. Logs an error if the expected code is not found.
+     *
+     * @param string $from The code string to find and replace
+     * @param string $to The replacement code string
+     * @return void
+     */
+    private function replaceCharLimit(string $from, string $to): void
     {
-        $file_contents = file_get_contents(self::FilePath);
+        if (!file_exists($this->getFilePath())) {
+            $this->log('File not found', ['path' => $this->getFilePath()]);
+            return;
+        }
+
+        $file_contents = file_get_contents($this->getFilePath());
+        if ($file_contents === false) {
+            $this->log('Failed to read file', ['path' => $this->getFilePath(), 'error' => error_get_last()]);
+            return;
+        }
 
         $countOfFromCode = substr_count($file_contents, $from);
         $countOfToCode = substr_count($file_contents, $to);
-        if ($countOfFromCode == 1) {
+
+        if ($countOfFromCode === 1) {
             $modified_contents = str_replace($from, $to, $file_contents);
-            file_put_contents(self::FilePath, $modified_contents);
-        } else if ($countOfToCode == 1) {
-            return; //already replaced so nothing to do
+            $result = file_put_contents($this->getFilePath(), $modified_contents);
+            if ($result === false) {
+                $this->log('Failed to write file', ['path' => $this->getFilePath(), 'error' => error_get_last()]);
+            }
+        } elseif ($countOfToCode === 1) {
+            return; // Already replaced, nothing to do
         } else {
-            $mess = "Failed to replace the character limit code. Trying to find: $from and got a count of: $countOfFromCode when expecting count of 1";
-            $this->log($mess);
+            $this->log('Failed to replace character limit code', [
+                'search_string' => $from,
+                'found_count' => $countOfFromCode,
+                'expected_count' => 1
+            ]);
         }
     }
 
-    function applyTextCapacityChange($updateCapacity): void
+    /**
+     * Applies or reverts the text capacity change based on setting
+     *
+     * @param bool $updateCapacity True to extend capacity, false to revert to original
+     * @return void
+     */
+    public function applyTextCapacityChange(bool $updateCapacity): void
     {
         if ($updateCapacity) {
             $this->replaceCharLimit(self::OriginalCharLimitCode, self::ReplacedCharLimitCode);
@@ -55,111 +112,183 @@ EOT;
         }
     }
 
-    function redcap_module_system_enable($version): void
+    /**
+     * Hook: Called when module is enabled at system level
+     *
+     * Updates the REDCap DataEntry/index.php file to include:
+     * - Extended character capacity (if enabled)
+     * - Dropdown code with system-level reason options
+     *
+     * @param string $version Module version being enabled
+     * @return void
+     */
+    public function redcap_module_system_enable(string $version): void
     {
-        //this should simply update the code file to include the necessary changes
-        //for changing the max chars and drop down
+        $this->log('Module enabled at system level', ['version' => $version]);
 
-        //change the char capacity - always set here as applies across all projects
-        $textCapacityEnabled = $this->getSystemSetting("enlarge-reason-text-capacity");
+        // Change the char capacity - always set here as applies across all projects
+        $textCapacityEnabled = (bool)$this->getSystemSetting("enlarge-reason-text-capacity");
         $this->applyTextCapacityChange($textCapacityEnabled);
 
-        //reason for change dropdown
-        //set here with default-reason-for-change-option options as given in system settings
-        //NOTE: these may be added to per project
-        $reasonForChangeOptions = $this->getSystemSetting("sys-reason-for-change-option");
+        // Reason for change dropdown with system-level options
+        $reasonForChangeOptions = $this->getSystemSetting("sys-reason-for-change-option") ?? [];
         $this->applyDefaultReasonForChangeDropdown($reasonForChangeOptions, true);
     }
 
-    function redcap_module_system_disable($version): void
+    /**
+     * Hook: Called when module is disabled at system level
+     *
+     * Reinstates the original REDCap DataEntry/index.php by:
+     * - Reverting character capacity to original 200 characters
+     * - Removing the inserted dropdown code
+     *
+     * @param string $version Module version being disabled
+     * @return void
+     */
+    public function redcap_module_system_disable(string $version): void
     {
-        //reinstates the original i.e. removes any edits to the code
+        $this->log('Module disabled at system level', ['version' => $version]);
 
-        //change the char capacity back to original value
+        // Revert character capacity to original value
         $this->replaceCharLimit(self::ReplacedCharLimitCode, self::OriginalCharLimitCode);
 
-        //remove the added code for the dropdown
-        $reasonForChangeOptions = $this->getSystemSetting("sys-reason-for-change-option");
+        // Remove the added dropdown code
+        $reasonForChangeOptions = $this->getSystemSetting("sys-reason-for-change-option") ?? [];
         $insertedCode = $this->makeInsertCode($reasonForChangeOptions);
         $this->removeCode($insertedCode);
     }
 
-    //this is a built-in external module framework method
-    //this is used to validate settings when saved - can be used to change the file contents for char limit
-    public function validateSettings($settings) :?string
+    /**
+     * Hook: Validates settings when saved
+     *
+     * Validates configuration and applies changes to the REDCap source file
+     * when system settings are modified.
+     *
+     * @param array $settings The settings being saved
+     * @return string|null Error message or null if valid
+     */
+    public function validateSettings($settings)
     {
-        if (array_key_exists("provide-reasons-for-change-dropdown", $settings) && array_key_exists("highlight-field-when-changed", $settings)) {
-            if(empty($settings['provide-reasons-for-change-dropdown']) && empty($settings['highlight-field-when-changed'])) {
+        // For project settings, ensure at least one feature is enabled
+        if (array_key_exists("provide-reasons-for-change-dropdown", $settings) &&
+            array_key_exists("highlight-field-when-changed", $settings)) {
+            if (empty($settings['provide-reasons-for-change-dropdown']) &&
+                empty($settings['highlight-field-when-changed'])) {
                 return "Please ensure at least one Enhance Reason For Change External Module setting is configured.";
             }
         }
 
+        // Handle system settings
         if (array_key_exists("enlarge-reason-text-capacity", $settings)) {
-
-            //NOTE: system settings
-            //update the code depending on system setting
-            $this->applyTextCapacityChange($settings['enlarge-reason-text-capacity']);
-            $reasonForChangeOptions = $settings["sys-reason-for-change-option"];
+            $this->applyTextCapacityChange((bool)$settings['enlarge-reason-text-capacity']);
+            $reasonForChangeOptions = $settings["sys-reason-for-change-option"] ?? [];
             $this->applyDefaultReasonForChangeDropdown($reasonForChangeOptions, false);
         }
 
-        //do not return an error here if the replace process fails as the user can never resolve that
-        //without resorting to a code change
         return null;
     }
 
 
-    //adds the $insertCode into the FilePath after the $searchTerm
-    function insertCode($searchTerm, $insertCode): void
+    /**
+     * Inserts code into the REDCap source file after a multi-line search term
+     *
+     * Searches for consecutive lines matching the search term and inserts
+     * the new code after the last matched line.
+     *
+     * @param string $searchTerm Multi-line search term to find
+     * @param string $insertCode The code to insert
+     * @return void
+     */
+    private function insertCode(string $searchTerm, string $insertCode): void
     {
-        $file_contents = file(self::FilePath);
-        $found = false;
+        if (!file_exists($this->getFilePath())) {
+            $this->log('File not found for code insertion', ['path' => $this->getFilePath()]);
+            return;
+        }
 
+        $file_contents = file($this->getFilePath());
+        if ($file_contents === false) {
+            $this->log('Failed to read file for code insertion', ['path' => $this->getFilePath()]);
+            return;
+        }
+
+        $found = false;
         $searchArray = explode("\n", $searchTerm);
         $matched = 0;
 
         foreach ($file_contents as $index => $line) {
-            //increment $matched so checks next line on next iteration
+            // Increment $matched so checks next line on next iteration
             if (str_contains($line, $searchArray[$matched])) {
                 $matched++;
             }
 
-            //if all the lines were found then mark as found
-            if ($matched == count($searchArray) - 1) {
+            // If all the lines were found then mark as found
+            if ($matched === count($searchArray) - 1) {
                 array_splice($file_contents, $index + 1, 0, $insertCode);
                 $found = true;
                 break;
             }
         }
 
-        //write it back if was found
         if ($found) {
-            file_put_contents(self::FilePath, implode('', $file_contents));
+            $result = file_put_contents($this->getFilePath(), implode('', $file_contents));
+            if ($result === false) {
+                $this->log('Failed to write file after code insertion', ['path' => $this->getFilePath()]);
+            }
         } else {
-            $this->log('failed to find the search term for inserting the code');
+            $this->log('Failed to find search term for inserting code');
         }
     }
 
-    //removes the inserted code from the FilePath
-    function removeCode($removeCode): void
+    /**
+     * Removes previously inserted code from the REDCap source file
+     *
+     * @param string $removeCode The code block to remove
+     * @return void
+     */
+    private function removeCode(string $removeCode): void
     {
-        $file_contents = file_get_contents(self::FilePath);
+        if (!file_exists($this->getFilePath())) {
+            $this->log('File not found for code removal', ['path' => $this->getFilePath()]);
+            return;
+        }
+
+        $file_contents = file_get_contents($this->getFilePath());
+        if ($file_contents === false) {
+            $this->log('Failed to read file for code removal', ['path' => $this->getFilePath()]);
+            return;
+        }
+
         if (str_contains($file_contents, $removeCode)) {
             $modified_contents = str_replace($removeCode, "", $file_contents);
-            file_put_contents(self::FilePath, $modified_contents);
-        }else {
-            $this->log('failed to find code to remove');
+            $result = file_put_contents($this->getFilePath(), $modified_contents);
+            if ($result === false) {
+                $this->log('Failed to write file after code removal', ['path' => $this->getFilePath()]);
+            }
+        } else {
+            $this->log('Failed to find code to remove');
         }
     }
 
-    //create the dropdown code from the options provided
-    function makeInsertCode($reasonForChangeOptions): string
+    /**
+     * Creates the dropdown HTML/JavaScript code from the provided options
+     *
+     * Generates a select dropdown with the given options and JavaScript
+     * to update the change reason textarea when a selection is made.
+     *
+     * @param array|null $reasonForChangeOptions Array of reason option strings
+     * @return string The generated HTML/JavaScript code block
+     */
+    private function makeInsertCode(?array $reasonForChangeOptions): string
     {
         $optionList = "<option value='' disabled selected>select a standard reason</option>";
-        foreach ($reasonForChangeOptions as $option) {
-            if ($option != null && $option != "") {
-                $escapedOption = htmlspecialchars($option, ENT_QUOTES, 'UTF-8');
-                $optionList .= "<option value=\"{$escapedOption}\">{$escapedOption}</option>";
+
+        if (is_array($reasonForChangeOptions)) {
+            foreach ($reasonForChangeOptions as $option) {
+                if ($option !== null && $option !== "") {
+                    $escapedOption = htmlspecialchars($option, ENT_QUOTES, 'UTF-8');
+                    $optionList .= "<option value=\"{$escapedOption}\">{$escapedOption}</option>";
+                }
             }
         }
 
@@ -171,7 +300,7 @@ EOT;
         $jsToUpdateChangeReason = "
 <script type='text/javascript'>
     let sel = document.getElementById('reason-for-change-opt');
-    sel.addEventListener('change', function(e) {                
+    sel.addEventListener('change', function(e) {
         let changeReason = document.getElementById('change_reason');
         changeReason.value = sel.options[sel.selectedIndex].text;
     });
@@ -187,24 +316,41 @@ $jsToUpdateChangeReason
 <!-- ****** end of insert ****** -->" . PHP_EOL;
     }
 
-    function applyDefaultReasonForChangeDropdown($reasonForChangeOptions, $empty): void
+    /**
+     * Applies the default reason for change dropdown to the REDCap source file
+     *
+     * Removes any existing dropdown code and inserts new code with the provided options.
+     *
+     * @param array|null $reasonForChangeOptions Array of reason option strings
+     * @param bool $empty Whether this is an initial insertion (true) or update (false)
+     * @return void
+     */
+    private function applyDefaultReasonForChangeDropdown(?array $reasonForChangeOptions, bool $empty): void
     {
-        //use the db system settings to remove the existing code
-        //then build the new code from given options
-
-        //get from db and build existing code
-        $oldReasonForChangeOptions = $this->getSystemSetting("sys-reason-for-change-option");
+        // Get from db and build existing code
+        $oldReasonForChangeOptions = $this->getSystemSetting("sys-reason-for-change-option") ?? [];
         $oldCode = $this->makeInsertCode($oldReasonForChangeOptions);
-        // remove first if not empty
-        if(!$empty)
-            $this->removeCode($oldCode);
 
-        //build new code and apply from new settings
+        // Remove first if not empty (updating existing code)
+        if (!$empty) {
+            $this->removeCode($oldCode);
+        }
+
+        // Build new code and apply from new settings
         $newCode = $this->makeInsertCode($reasonForChangeOptions);
         $this->insertCode(self::DropdownSearchTerm, $newCode);
     }
 
-    function js(string $highlightStyle): void
+    /**
+     * Outputs JavaScript for field highlighting functionality
+     *
+     * Generates JavaScript functions for detecting field changes and applying
+     * visual highlighting to modified fields.
+     *
+     * @param string $highlightStyle CSS style for the highlight border
+     * @return void
+     */
+    private function outputHighlightJs(string $highlightStyle): void
     {
         // Sanitize the style to prevent XSS - only allow safe CSS characters
         $safeStyle = preg_replace('/[^a-zA-Z0-9\s\-#.,()%]/', '', $highlightStyle);
@@ -280,17 +426,35 @@ $jsToUpdateChangeReason
             </script>";
     }
 
-    //gets the reasons for change at a project level and appends to the default ones
-    function addProjectSpecificReasonsForChange(): void
+    /**
+     * Adds project-specific reasons for change to the dropdown
+     *
+     * Injects JavaScript that appends project-level options to the system-level
+     * dropdown options at runtime.
+     *
+     * @return void
+     */
+    private function addProjectSpecificReasonsForChange(): void
     {
-        //get the project reasons and append to system list
         $projReasons = $this->getProjectSetting("reason-for-change-option");
-        if($projReasons && is_array($projReasons) && count($projReasons) > 0) {
-            // Filter out empty values and use json_encode for safe JS output
-            $filteredReasons = array_filter($projReasons, function($item) {
-                return $item !== null && $item !== "";
-            });
-            $reasonForChangeOptionsJson = json_encode(array_values($filteredReasons), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+
+        if (!is_array($projReasons) || count($projReasons) === 0) {
+            return;
+        }
+
+        // Filter out empty values and use json_encode for safe JS output
+        $filteredReasons = array_filter($projReasons, function ($item) {
+            return $item !== null && $item !== "";
+        });
+
+        if (count($filteredReasons) === 0) {
+            return;
+        }
+
+        $reasonForChangeOptionsJson = json_encode(
+            array_values($filteredReasons),
+            JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
+        );
 
         echo "<script type='text/javascript'>
 const reasonsForChange = {$reasonForChangeOptionsJson};
@@ -302,111 +466,105 @@ if(reasonForChangeOpt) {
             if(!isOptionPresent) {
                 let option = document.createElement('option');
                 option.value = opt;
-                option.text = opt; 
-                
-                reasonForChangeOpt.appendChild(option);    
-            }            
+                option.text = opt;
+                reasonForChangeOpt.appendChild(option);
+            }
         });
-    })    
+    })
 }
 </script>";
-        }
     }
 
-    function handleProjectSettings() : void
+    /**
+     * Handles project-level settings for the reason for change dropdown
+     *
+     * Shows the dropdown container and adds project-specific reasons if configured.
+     *
+     * @return void
+     */
+    private function handleProjectSettings(): void
     {
-        //check if the project uses the reasons for change drop down and show it if so
-        if($this->getProjectSetting("provide-reasons-for-change-dropdown")) {
-            self::addProjectSpecificReasonsForChange();
+        if (!$this->getProjectSetting("provide-reasons-for-change-dropdown")) {
+            return;
+        }
 
-            //show the new markup if not selected to be shown for project as by default it is hidden
-            echo "<script type='text/javascript'>
-//the inner change div is always present so can be adjusted immediately without waiting for an event
+        $this->addProjectSpecificReasonsForChange();
+
+        // Show the markup (by default it is hidden)
+        echo "<script type='text/javascript'>
 let changeDialog = document.getElementById('change_reason_popup');
-if(changeDialog) {        
+if(changeDialog) {
     let reasonForChangeContainer = document.getElementById('reasons-for-change-container');
-    //with the container of the added html, simply hide it as the dropdown option is not checked
     if(reasonForChangeContainer) {
         reasonForChangeContainer.style.display = 'block';
-    }        
+    }
 }
 </script>";
-        }
     }
 
 
-    public function redcap_data_entry_form($project_id, $record, $instrument, $event_id, $group_id, $repeat_instance): void
-    {
+    /**
+     * Hook: Called when a data entry form is displayed
+     *
+     * Injects JavaScript for field highlighting and project-specific dropdown options.
+     *
+     * @param int|string $project_id The project ID
+     * @param string|null $record The record name
+     * @param string $instrument The instrument/form name
+     * @param int $event_id The event ID
+     * @param int|null $group_id The DAG group ID
+     * @param int $repeat_instance The repeat instance number
+     * @return void
+     */
+    public function redcap_data_entry_form(
+        $project_id,
+        ?string $record,
+        string $instrument,
+        int $event_id,
+        ?int $group_id,
+        int $repeat_instance
+    ): void {
         global $Proj;
 
-        if (empty($project_id)) return;
+        if (empty($project_id)) {
+            return;
+        }
 
-        //only implement this when highlighting fields
-        $shouldHighlight = $this->getProjectSetting("highlight-field-when-changed");
-        $provideReasonsForChange = $this->getProjectSetting("provide-reasons-for-change-dropdown");
-        $projReasons = $this->getProjectSetting("reason-for-change-option");
-        $reasonForChangeOptions = $this->getSystemSetting("sys-reason-for-change-option");
-        $proReasonForChangeOptionsEmpty = 0;
-        $sysReasonForChangeOptionsEmpty= 0;
+        $shouldHighlight = (bool)$this->getProjectSetting("highlight-field-when-changed");
+        $provideReasonsForChange = (bool)$this->getProjectSetting("provide-reasons-for-change-dropdown");
+        $projReasons = $this->getProjectSetting("reason-for-change-option") ?? [];
+        $reasonForChangeOptions = $this->getSystemSetting("sys-reason-for-change-option") ?? [];
 
         if (!$shouldHighlight && !$provideReasonsForChange) {
-            echo "<script type='text/javascript'>
-                    alert('Please ensure at least one Enhance Reason For Change External Module setting is configured.');
-                </script>";
+            $this->showAlert('Please ensure at least one Enhance Reason For Change External Module setting is configured.');
             return;
         }
 
         if ($provideReasonsForChange) {
-            if($Proj->project['require_change_reason'] != 1) {
-                echo "<script type='text/javascript'>
-                        alert('Please ensure require a reason for change is enabled in Additional Customizations in Project Setup.');
-                    </script>";
+            if (($Proj->project['require_change_reason'] ?? 0) != 1) {
+                $this->showAlert('Please ensure require a reason for change is enabled in Additional Customizations in Project Setup.');
                 return;
             }
         }
 
-        // check if system reasons for change options are empty
-        if($reasonForChangeOptions && is_array($reasonForChangeOptions) && count($reasonForChangeOptions) > 0) {
-            //check if the options are all empty
-            $allEmpty = true;
-            foreach ($reasonForChangeOptions as $option) {
-                if (!empty($option)) {
-                    $allEmpty = false;
-                    break;
-                }
-            }
-            if ($allEmpty)
-                $sysReasonForChangeOptionsEmpty = 1;
-        }
+        // Check if system reasons for change options are empty
+        $sysReasonForChangeOptionsEmpty = !$this->hasNonEmptyValues($reasonForChangeOptions);
 
-        // check if project reasons for change options are empty
-        if($projReasons && is_array($projReasons) && count($projReasons) > 0) {
-            //check if the options are all empty
-            $allEmpty = true;
-            foreach ($projReasons as $option) {
-                if (!empty($option)) {
-                    $allEmpty = false;
-                    break;
-                }
-            }
-            if ($allEmpty)
-                $proReasonForChangeOptionsEmpty = 1;
-        }
+        // Check if project reasons for change options are empty
+        $proReasonForChangeOptionsEmpty = !$this->hasNonEmptyValues($projReasons);
 
-        //if Reason for change is enabled and options (either in system or project level) are not configured
-        if(($provideReasonsForChange) && ($proReasonForChangeOptionsEmpty) && ($sysReasonForChangeOptionsEmpty))  {
-            echo "<script type='text/javascript'>
-                alert('Please configure the Reason for Change options.');
-                </script>";
+        // If Reason for change is enabled and no options are configured
+        if ($provideReasonsForChange && $proReasonForChangeOptionsEmpty && $sysReasonForChangeOptionsEmpty) {
+            $this->showAlert('Please configure the Reason for Change options.');
             return;
         }
 
-        if($shouldHighlight) {
+        if ($shouldHighlight) {
             $style = $this->getProjectSetting("highlight-field-when-changed-style");
-            $highlightStyle = $style ?? 'solid 2px red';
+            $highlightStyle = $style ?? self::DEFAULT_HIGHLIGHT_STYLE;
 
-            //provide js functions as needed
-            self::js($highlightStyle);
+            // Provide JS functions for field highlighting
+            $this->outputHighlightJs($highlightStyle);
 
             //need to create a different selector depending on the element type
             //i.e. a standard text question (or int etc.) just uses a text box with name attribute and can use change
@@ -513,8 +671,40 @@ if(changeDialog) {
             echo "</script>";
         }
 
-        //check project settings and hide reason for change drop down if not checked or add project reasons if given
-        self::handleProjectSettings();
+        // Handle project settings for dropdown visibility and project-specific options
+        $this->handleProjectSettings();
     }
 
+    /**
+     * Checks if an array has non-empty values
+     *
+     * @param array|null $values The array to check
+     * @return bool True if has non-empty values
+     */
+    private function hasNonEmptyValues(?array $values): bool
+    {
+        if (!is_array($values) || count($values) === 0) {
+            return false;
+        }
+
+        foreach ($values as $value) {
+            if (!empty($value)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Shows a JavaScript alert message
+     *
+     * @param string $message The alert message
+     * @return void
+     */
+    private function showAlert(string $message): void
+    {
+        $escapedMessage = htmlspecialchars($message, ENT_QUOTES, 'UTF-8');
+        echo "<script type='text/javascript'>alert('{$escapedMessage}');</script>";
+    }
 }

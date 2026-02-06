@@ -3,6 +3,7 @@
   "description": "Module that allows some configuration for the built-in reason for change process",
   "namespace": "CCTC\\EnhanceReasonForChangeModule",
   "framework-version": 14,
+  "documentation": "https://github.com/CCTC-team/enhance_reason_for_change",
   "authors": [
     {
       "name": "Richard Hardy",
@@ -64,7 +65,11 @@
       "type": "text",
       "repeatable": false,
       "required": false,
-      "super-users-only": true
+      "super-users-only": true,
+      "branchingLogic": {
+        "field": "highlight-field-when-changed",
+        "value": true
+      }
     }
   ],
   "compatibility": {

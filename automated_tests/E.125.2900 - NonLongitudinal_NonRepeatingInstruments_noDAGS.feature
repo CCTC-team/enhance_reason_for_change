@@ -52,7 +52,7 @@ Feature: E.125.2900 - NonLongitudinal_NonRepeatingInstruments_noDAGS
     # Non-repeating event
     Given I click on the link labeled "Record Status Dashboard"
     Then I should see "Record Status Dashboard (all records)"
-    And I click on the link labeled "2"
+    And I click on the bubble for the "Data Types" data collection instrument for record ID "2"
     And I clear field and enter "Name2" into the input field labeled "Name"
     And I select the submit option labeled "Save & Stay" on the Data Collection Instrument
     Then I should NOT see the field labeled "Name" with a colored right border
@@ -89,7 +89,7 @@ Feature: E.125.2900 - NonLongitudinal_NonRepeatingInstruments_noDAGS
     And I click on the link labeled "E.125.2900"
     When I click on the link labeled "Record Status Dashboard"
     Then I should see a link labeled "2"
-    And I click on the link labeled "1"
+    And I click on the bubble for the "Data Types" data collection instrument for record ID "1"
     And I clear field and enter "Name1" into the input field labeled "Name"
     And I select the submit option labeled "Save & Stay" on the Data Collection Instrument
     Then I should NOT see the field labeled "Name" with a colored right border
@@ -120,7 +120,7 @@ Feature: E.125.2900 - NonLongitudinal_NonRepeatingInstruments_noDAGS
     When I click on the link labeled "My Projects"
     And I click on the link labeled "E.125.2900"
     When I click on the link labeled "Record Status Dashboard"
-    And I click on the link labeled "1"
+    And I click on the bubble for the "Data Types" data collection instrument for record ID "1"
     And I check the checkbox labeled "Checkbox2"
     And I select the submit option labeled "Save & Stay" on the Data Collection Instrument
     Then I should see the field labeled "Checkbox" with a 2px "solid" right border in "red" color
@@ -155,7 +155,7 @@ Feature: E.125.2900 - NonLongitudinal_NonRepeatingInstruments_noDAGS
     When I click on the link labeled "My Projects"
     And I click on the link labeled "E.125.2900"
     When I click on the link labeled "Record Status Dashboard"
-    And I click on the link labeled "1"
+    And I click on the bubble for the "Data Types" data collection instrument for record ID "1"
     And I select "Choice101" on the radio field labeled "Radio Button Manual"
     Then I should see the field labeled "Radio Button Manual" with a 4px "dashed" right border in "blue" color
     And I select the submit option labeled "Save & Stay" on the Data Collection Instrument

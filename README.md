@@ -37,8 +37,8 @@ When a new version of the module becomes available, the module should be disable
 
 - `provide-reasons-for-change-dropdown` - when checked, a dropdown control is provided with a selection of reasons that 
   users can select. This negates the need to write free text each time. The free text option remains
-- `reason-for-change-option` - a list of options that are used to populate the dropdown control configurable at a 
-  project level. These are relevant only if the `provide-standard-reasons-dropdown` option is checked. The options 
+- `reason-for-change-option` - a list of options that are used to populate the dropdown control configurable at a
+  project level. These are relevant only if the `provide-reasons-for-change-dropdown` option is checked. The options
   provided are simply appended to the system level options given by `sys-reason-for-change-option`
 - `highlight-field-when-changed` - when checked, any changes made to a field either directly, or via the 'mark field'
   mechanism or the date time picker highlight the field's row's right border. Note that the mechanism mimics REDCap's
@@ -70,6 +70,18 @@ as the changes occur. If changed and highlighted, a field will remain like that 
 the value back to its original value. This behaviour is also how REDCap handles changes and notifications to users 
 should they try and navigate away from a 'dirty' form.
 
+#### Automation Testing
+
+The module includes comprehensive **Cypress automated** tests using the **Cucumber/Gherkin framework**. To set up Cypress, refer to the following repository:  
+https://github.com/vanderbilt-redcap/redcap_cypress
+
+We use a custom Docker instance, **CCTC_REDCap_Docker**, instead of `redcap_docker`. This instance mirrors our Live environment by using the same versions of **MariaDB** and **PHP**.
+
+All automated test scripts are located in the `automated_tests` directory. These scripts can also be used to manually test the external module. The directory contains:
+- Custom step definitions created by our team
+- Fixture files
+- User Requirement Specification (URS) documents
+- Feature test scripts
 
 #### Future work
 
