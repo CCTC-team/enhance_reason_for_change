@@ -2,7 +2,7 @@
   "name": "Enhance reason for change",
   "description": "Module that allows some configuration for the built-in reason for change process",
   "namespace": "CCTC\\EnhanceReasonForChangeModule",
-  "framework-version": 14,
+  "framework-version": 16,
   "documentation": "https://github.com/CCTC-team/enhance_reason_for_change",
   "authors": [
     {
