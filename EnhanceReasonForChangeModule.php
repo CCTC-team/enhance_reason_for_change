@@ -85,6 +85,8 @@ EOT;
             $result = file_put_contents($this->getFilePath(), $modified_contents);
             if ($result === false) {
                 $this->log('Failed to write file', ['path' => $this->getFilePath(), 'error' => error_get_last()]);
+            } else {
+                $this->log('Character limit code replaced successfully', ['path' => $this->getFilePath(), 'from' => $from, 'to' => $to]);
             }
         } elseif ($countOfToCode === 1) {
             return; // Already replaced, nothing to do
@@ -124,7 +126,7 @@ EOT;
      */
     public function redcap_module_system_enable(string $version): void
     {
-        $this->log('Module enabled at system level', ['version' => $version]);
+        $this->log('Module system enable initiated', ['version' => $version]);
 
         // Change the char capacity - always set here as applies across all projects
         $textCapacityEnabled = (bool)$this->getSystemSetting("enlarge-reason-text-capacity");
@@ -147,7 +149,7 @@ EOT;
      */
     public function redcap_module_system_disable(string $version): void
     {
-        $this->log('Module disabled at system level', ['version' => $version]);
+        $this->log('Module system disable initiated', ['version' => $version]);
 
         // Revert character capacity to original value
         $this->replaceCharLimit(self::ReplacedCharLimitCode, self::OriginalCharLimitCode);
@@ -234,9 +236,11 @@ EOT;
             $result = file_put_contents($this->getFilePath(), implode('', $file_contents));
             if ($result === false) {
                 $this->log('Failed to write file after code insertion', ['path' => $this->getFilePath()]);
+            } else {
+                $this->log(basename($this->getFilePath()) . ' code inserted successfully', ['path' => $this->getFilePath()]);
             }
         } else {
-            $this->log('Failed to find search term for inserting code');
+            $this->log(basename($this->getFilePath()) . ' search term not found in file', ['path' => $this->getFilePath()]);
         }
     }
 
@@ -264,9 +268,11 @@ EOT;
             $result = file_put_contents($this->getFilePath(), $modified_contents);
             if ($result === false) {
                 $this->log('Failed to write file after code removal', ['path' => $this->getFilePath()]);
+            } else {
+                $this->log(basename($this->getFilePath()) . ' code removed successfully', ['path' => $this->getFilePath()]);
             }
         } else {
-            $this->log('Failed to find code to remove');
+            $this->log(basename($this->getFilePath()) . ' code not found (may already be removed)', ['path' => $this->getFilePath()]);
         }
     }
 

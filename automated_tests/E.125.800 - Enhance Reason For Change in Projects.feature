@@ -15,14 +15,14 @@ Feature: The system shall allow the configuration of project-level default dropd
 
     Given I click on the link labeled "Manage"
     Then I should see "External Modules - Module Manager"
-    And I should NOT see "Enhance reason for change - v1.0.0"
+    And I should NOT see "Enhance reason for change - v1.0.1"
     When I click on the button labeled "Enable a module"
     And I wait for 2 seconds
     Then I should see "Available Modules"
     And I click on the button labeled "Enable" in the row labeled "Enhance reason for change"
     And I wait for 1 second
     And I click on the button labeled "Enable"
-    Then I should see "Enhance reason for change - v1.0.0"
+    Then I should see "Enhance reason for change - v1.0.1"
 
     # E.125.700
     Given I click on the button labeled "Configure"
@@ -31,7 +31,7 @@ Feature: The system shall allow the configuration of project-level default dropd
     And I click on the button labeled "+"
     When I enter "Default Option 2" into the input field labeled "2. Provides a default option for the reason for change dropdown"
     And I click on the button labeled "Save"
-    Then I should see "Enhance reason for change - v1.0.0"
+    Then I should see "Enhance reason for change - v1.0.1"
 
   Scenario: Enable external module in project
     Given I create a new project named "E.125.800" by clicking on "New Project" in the menu bar, selecting "Practice / Just for fun" from the dropdown, choosing file "fixtures/cdisc_files/E125800.xml", and clicking the "Create Project" button
@@ -54,17 +54,17 @@ Feature: The system shall allow the configuration of project-level default dropd
 
     Given I click on the link labeled "Manage"
     Then I should see "External Modules - Project Module Manager"
-    And I should NOT see "Enhance reason for change - v1.0.0"
+    And I should NOT see "Enhance reason for change - v1.0.1"
     When I click on the button labeled "Enable a module"
-    And I click on the button labeled "Enable" in the row labeled "Enhance reason for change - v1.0.0"
-    Then I should see "Enhance reason for change - v1.0.0"
+    And I click on the button labeled "Enable" in the row labeled "Enhance reason for change - v1.0.1"
+    Then I should see "Enhance reason for change - v1.0.1"
 
     #VERIFY - E.125.700
     Given I click on the button labeled "Configure"
     Then I should see "Configure Module"
     When I check the checkbox labeled "When checked, a dropdown of reasons for change will be available for the user to select from"
     And I click on the button labeled "Save"
-    Then I should see "Enhance reason for change - v1.0.0"
+    Then I should see "Enhance reason for change - v1.0.1"
 
     # E.125.1200, E.125.1300: Repeating Instrument - instance 2, Arm 1
     Given I click on the link labeled "Record Status Dashboard"
@@ -88,7 +88,7 @@ Feature: The system shall allow the configuration of project-level default dropd
     # E.125.900
     And I check the checkbox labeled "When checked, any change to a field will highlight its row's right border"
     Then I click on the button labeled "Save"
-    And I should see "Enhance reason for change - v1.0.0"
+    And I should see "Enhance reason for change - v1.0.1"
 
     # E.125.1200, E.125.1300: Repeating event - instance 3, Arm 2
     Given I click on the link labeled "Record Status Dashboard"
@@ -108,7 +108,7 @@ Feature: The system shall allow the configuration of project-level default dropd
     # E.125.1000
     When I enter "dashed 4px blue" into the input field labeled "The style to apply to the highlight border"
     Then I click on the button labeled "Save"
-    And I should see "Enhance reason for change - v1.0.0"
+    And I should see "Enhance reason for change - v1.0.1"
 
     # E.125.1200, E.125.1300: Repeating event - instance 1, Arm 2
     Given I click on the link labeled "Record Status Dashboard"
@@ -138,7 +138,7 @@ Feature: The system shall allow the configuration of project-level default dropd
 
     #VERIFY - E.125.1100 - Only Super-users can configure external Module
     Given I click on the link labeled "Manage"
-    Then I should see "Enhance reason for change - v1.0.0"
+    Then I should see "Enhance reason for change - v1.0.1"
     #And I should NOT see the button labeled "Disable"
     When I click on the button labeled "Configure"
     Then I should see "Configure Module"
@@ -170,30 +170,30 @@ Feature: The system shall allow the configuration of project-level default dropd
     # Disable external module in project E.125.800
     Given I click on the link labeled "Manage"
     Then I should see "External Modules - Project Module Manager"
-    And I should see "Enhance reason for change - v1.0.0"
+    And I should see "Enhance reason for change - v1.0.1"
     When I click on the button labeled "Disable"
     Then I should see "Disable module?"
     When I click on the button labeled "Disable module"
-    Then I should NOT see "Enhance reason for change - v1.0.0"
+    Then I should NOT see "Enhance reason for change - v1.0.1"
 
     Given I click on the link labeled "Logging"
     Then I should see a table header and row containing the following values in the logging table:
       | Time / Date      | Username   | Action                                     | List of Data Changes OR Fields Exported    | Reason for Data Change(s) |
-      | mm/dd/yyyy hh:mm | test_admin | Disable external module "enhance_reason_for_change_v1.0.0" for project                  |                                                                                             |                           |
+      | mm/dd/yyyy hh:mm | test_admin | Disable external module "enhance_reason_for_change_v1.0.1" for project                  |                                                                                             |                           |
       | mm/dd/yyyy hh:mm | test_user1 | Update record 1 (Event 1 (Arm 1: Arm 1))   | checkbox(2) = checked	                    | Reason 2                  |
       | mm/dd/yyyy hh:mm | test_admin | Update record 3 (Event 1 (Arm 2: Arm Two)) | radio_button_auto = '1'                    | Option 4                  |
-      | mm/dd/yyyy hh:mm | test_admin | Modify configuration for external module "enhance_reason_for_change_v1.0.0" for project | highlight-field-when-changed-style                                                          |                           |
+      | mm/dd/yyyy hh:mm | test_admin | Modify configuration for external module "enhance_reason_for_change_v1.0.1" for project | highlight-field-when-changed-style                                                          |                           |
       | mm/dd/yyyy hh:mm | test_admin | Update record 3 (Event 1 (Arm 2: Arm Two)) | [instance = 3], text2 = 'ABC'              | Option 3                  |
-      | mm/dd/yyyy hh:mm | test_admin | Modify configuration for external module "enhance_reason_for_change_v1.0.0" for project | reason-for-change-option, highlight-field-when-changed	                                   	|                           |
+      | mm/dd/yyyy hh:mm | test_admin | Modify configuration for external module "enhance_reason_for_change_v1.0.1" for project | reason-for-change-option, highlight-field-when-changed	                                   	|                           |
       | mm/dd/yyyy hh:mm | test_admin | Update record 2 (Event 1 (Arm 1: Arm 1))   | [instance = 2], ptname = 'Name1'           | Default Option 1          |
-      | mm/dd/yyyy hh:mm | test_admin | Modify configuration for external module "enhance_reason_for_change_v1.0.0" for project | provide-reasons-for-change-dropdown, reason-for-change-option, highlight-field-when-changed	|                           |
-      | mm/dd/yyyy hh:mm | test_admin | Enable external module "enhance_reason_for_change_v1.0.0" for project                   |                                                                                             |                           |
+      | mm/dd/yyyy hh:mm | test_admin | Modify configuration for external module "enhance_reason_for_change_v1.0.1" for project | provide-reasons-for-change-dropdown, reason-for-change-option, highlight-field-when-changed	|                           |
+      | mm/dd/yyyy hh:mm | test_admin | Enable external module "enhance_reason_for_change_v1.0.1" for project                   |                                                                                             |                           |
       | mm/dd/yyyy hh:mm | test_admin | Update record 1 (Event 1 (Arm 1: Arm 1))   | ptname_v2 = 'Name'                         | Reason 1                  |
 
     # Disable external module in Control Center
     Given I click on the link labeled "Control Center"
     When I click on the link labeled "Manage"
-    Then I should see "Enhance reason for change - v1.0.0"
+    Then I should see "Enhance reason for change - v1.0.1"
     When I click on the button labeled "View Usage"
     Then I should see "None"
     And I should NOT see "E.125.800"
@@ -201,7 +201,7 @@ Feature: The system shall allow the configuration of project-level default dropd
     And I click on the button labeled "Disable"
     Then I should see "Disable module?"
     When I click on the button labeled "Disable module"
-    Then I should NOT see "Enhance reason for change - v1.0.0"
+    Then I should NOT see "Enhance reason for change - v1.0.1"
 
     # Not checking 'Delete Version' for now as this is used for deleting lower versions.
     # If the entire EM is deleted REDCap throws an error
@@ -209,12 +209,12 @@ Feature: The system shall allow the configuration of project-level default dropd
     Given I click on the link labeled "User Activity Log"
     Then I should see a table header and row containing the following values in a table:
       | Time             | User       | Event                                                                                   |
-      | mm/dd/yyyy hh:mm | test_admin | Disable external module "enhance_reason_for_change_v1.0.0" for system                   | 
-      | mm/dd/yyyy hh:mm | test_admin | Disable external module "enhance_reason_for_change_v1.0.0" for project                  | 
-      | mm/dd/yyyy hh:mm | test_admin | Modify configuration for external module "enhance_reason_for_change_v1.0.0" for project | 
-      | mm/dd/yyyy hh:mm | test_admin | Enable external module "enhance_reason_for_change_v1.0.0" for project                   | 
-      | mm/dd/yyyy hh:mm | test_admin | Modify configuration for external module "enhance_reason_for_change_v1.0.0" for system  | 
-      | mm/dd/yyyy hh:mm | test_admin | Enable external module "enhance_reason_for_change_v1.0.0" for system                    |    
+      | mm/dd/yyyy hh:mm | test_admin | Disable external module "enhance_reason_for_change_v1.0.1" for system                   | 
+      | mm/dd/yyyy hh:mm | test_admin | Disable external module "enhance_reason_for_change_v1.0.1" for project                  | 
+      | mm/dd/yyyy hh:mm | test_admin | Modify configuration for external module "enhance_reason_for_change_v1.0.1" for project | 
+      | mm/dd/yyyy hh:mm | test_admin | Enable external module "enhance_reason_for_change_v1.0.1" for project                   | 
+      | mm/dd/yyyy hh:mm | test_admin | Modify configuration for external module "enhance_reason_for_change_v1.0.1" for system  | 
+      | mm/dd/yyyy hh:mm | test_admin | Enable external module "enhance_reason_for_change_v1.0.1" for system                    |    
 
     And I logout
 

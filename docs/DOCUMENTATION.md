@@ -220,7 +220,7 @@ The following items from the Enhancement Plan (see [ENHANCEMENT_PLAN.md](ENHANCE
 ## File Structure
 
 ```
-enhance_reason_for_change_v1.0.0/
+enhance_reason_for_change_v1.0.1/
 ├── EnhanceReasonForChangeModule.php    # Main module class
 ├── config.json                          # Module configuration
 ├── README.md                            # User documentation
