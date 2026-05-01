@@ -1,4 +1,4 @@
-Feature: E.125.2900 - NonLongitudinal_NonRepeatingInstruments_noDAGS
+Feature: E.125.2700 - NonLongitudinal_RepeatingInstruments_noDAGS
 
   As a REDCap end user
   I want to see that Enhance reason for change is functioning as expected
@@ -34,11 +34,11 @@ Feature: E.125.2900 - NonLongitudinal_NonRepeatingInstruments_noDAGS
     Then I should see "Enhance reason for change - v1.0.1"
 
   Scenario: Enable external module in project
-    Given I create a new project named "E.125.2900" by clicking on "New Project" in the menu bar, selecting "Practice / Just for fun" from the dropdown, choosing file "fixtures/cdisc_files/ProjectTypes/NonLongitudinal_NonRepeatingInstruments_noDAGS.xml", and clicking the "Create Project" button
+    Given I create a new project named "E.125.2700" by clicking on "New Project" in the menu bar, selecting "Practice / Just for fun" from the dropdown, choosing file "fixtures/cdisc_files/ProjectTypes/NonLongitudinal_RepeatingInstruments_noDAGs.xml", and clicking the "Create Project" button
 
     # ACTION: Import data
     Given I click on the link labeled "Data Import Tool"
-    And I upload a "csv" format file located at "fixtures/import_files/NonLongitudinal_NonRepeatingInstruments_noDAGS.csv", by clicking the button near "Select your CSV data file" to browse for the file, and clicking the button labeled "Upload File" to upload the file
+    And I upload a "csv" format file located at "fixtures/import_files/NonLongitudinal_RepeatingInstruments_noDAGs.csv", by clicking the button near "Select your CSV data file" to browse for the file, and clicking the button labeled "Upload File" to upload the file
     And I should see "Your document was uploaded successfully and is ready for review."
     And I click on the button labeled "Import Data"
     Then I should see "Import Successful!"
@@ -52,7 +52,8 @@ Feature: E.125.2900 - NonLongitudinal_NonRepeatingInstruments_noDAGS
     # Non-repeating event
     Given I click on the link labeled "Record Status Dashboard"
     Then I should see "Record Status Dashboard (all records)"
-    And I click on the bubble for the "Data Types" data collection instrument for record ID "2"
+    And I click on the link labeled "2"
+    And I click on the icon in the column labeled "" and the row labeled "2"
     And I clear field and enter "Name2" into the input field labeled "Name"
     And I select the submit option labeled "Save & Stay" on the Data Collection Instrument
     Then I should NOT see the field labeled "Name" with a colored right border
@@ -86,10 +87,13 @@ Feature: E.125.2900 - NonLongitudinal_NonRepeatingInstruments_noDAGS
     # E.125.1200, E.125.1300
     Given I login to REDCap with the user "Test_User1"
     When I click on the link labeled "My Projects"
-    And I click on the link labeled "E.125.2900"
+    And I click on the link labeled "E.125.2700"
     When I click on the link labeled "Record Status Dashboard"
+    And I should NOT see a link labeled "Arm Two"
+    And I should NOT see a link labeled "Arm 1"
     Then I should see a link labeled "2"
-    And I click on the bubble for the "Data Types" data collection instrument for record ID "1"
+    And I click on the link labeled "1"
+    And I click on the icon in the column labeled "" and the row labeled "2"
     And I clear field and enter "Name1" into the input field labeled "Name"
     And I select the submit option labeled "Save & Stay" on the Data Collection Instrument
     Then I should NOT see the field labeled "Name" with a colored right border
@@ -101,11 +105,11 @@ Feature: E.125.2900 - NonLongitudinal_NonRepeatingInstruments_noDAGS
   Scenario: Verify different configuration settings
     Given I login to REDCap with the user "Test_Admin"
     When I click on the link labeled "My Projects"
-    And I click on the link labeled "E.125.2900"
+    And I click on the link labeled "E.125.2700"
     When I click on the link labeled "Manage"
     And I click on the button labeled "Configure"
     Then I should see "Configure Module"
-    # E.125.2900
+    # E.125.2700
     And I enter "Option 3" into the input field labeled "1. Provide an option for the reason for change dropdown"
     And I click on the button labeled "+"
     And I enter "Option 4" into the input field labeled "2. Provide an option for the reason for change dropdown"
@@ -118,9 +122,10 @@ Feature: E.125.2900 - NonLongitudinal_NonRepeatingInstruments_noDAGS
     # E.125.1200, E.125.1300
     Given I login to REDCap with the user "Test_User1"
     When I click on the link labeled "My Projects"
-    And I click on the link labeled "E.125.2900"
+    And I click on the link labeled "E.125.2700"
     When I click on the link labeled "Record Status Dashboard"
-    And I click on the bubble for the "Data Types" data collection instrument for record ID "1"
+    And I click on the link labeled "1"
+    And I click on the icon in the column labeled "" and the row labeled "3"
     And I check the checkbox labeled "Checkbox2"
     And I select the submit option labeled "Save & Stay" on the Data Collection Instrument
     Then I should see the field labeled "Checkbox" with a 2px "solid" right border in "red" color
@@ -131,7 +136,7 @@ Feature: E.125.2900 - NonLongitudinal_NonRepeatingInstruments_noDAGS
 
     Given I login to REDCap with the user "Test_Admin"
     When I click on the link labeled "My Projects"
-    And I click on the link labeled "E.125.2900"
+    And I click on the link labeled "E.125.2700"
     When I click on the link labeled "Manage"
     And I click on the button labeled "Configure"
     Then I should see "Configure Module"
@@ -153,9 +158,10 @@ Feature: E.125.2900 - NonLongitudinal_NonRepeatingInstruments_noDAGS
     # E.125.1200, E.125.1300
     Given I login to REDCap with the user "Test_User1"
     When I click on the link labeled "My Projects"
-    And I click on the link labeled "E.125.2900"
+    And I click on the link labeled "E.125.2700"
     When I click on the link labeled "Record Status Dashboard"
-    And I click on the bubble for the "Data Types" data collection instrument for record ID "1"
+    And I click on the link labeled "1"
+    And I click on the icon in the column labeled "" and the row labeled "1"
     And I select "Choice101" on the radio field labeled "Radio Button Manual"
     Then I should see the field labeled "Radio Button Manual" with a 4px "dashed" right border in "blue" color
     And I select the submit option labeled "Save & Stay" on the Data Collection Instrument
@@ -181,9 +187,9 @@ Feature: E.125.2900 - NonLongitudinal_NonRepeatingInstruments_noDAGS
   Scenario: E.125.100 - Disable external module
     Given I login to REDCap with the user "Test_Admin"
     When I click on the link labeled "My Projects"
-    And I click on the link labeled "E.125.2900"
+    And I click on the link labeled "E.125.2700"
 
-    # Disable external module in project E.125.2900
+    # Disable external module in project E.125.2700
     Given I click on the link labeled "Manage"
     Then I should see "External Modules - Project Module Manager"
     And I should see "Enhance reason for change - v1.0.1"
@@ -194,16 +200,16 @@ Feature: E.125.2900 - NonLongitudinal_NonRepeatingInstruments_noDAGS
 
     Given I click on the link labeled "Logging"
     Then I should see a table header and row containing the following values in the logging table:
-      | Time / Date      | Username   | Action             | List of Data Changes OR Fields Exported  | Reason for Data Change(s) |
-      | mm/dd/yyyy hh:mm | test_admin | Disable external module "enhance_reason_for_change_v1.0.1" for project                    |                                                                                             |                           |
+      | Time / Date      | Username   | Action           | List of Data Changes OR Fields Exported  | Reason for Data Change(s) |
+      | mm/dd/yyyy hh:mm | test_admin | Disable external module "enhance_reason_for_change_v1.0.1" for project                  |                                                                                             |                           |
       | mm/dd/yyyy hh:mm | test_user1 | Update record 1  | radio_button_manual = '9..9'	            | Option 4                  |
-      | mm/dd/yyyy hh:mm | test_admin | Modify configuration for external module "enhance_reason_for_change_v1.0.1" for project   | highlight-field-when-changed-style                                                          |                           |
-      | mm/dd/yyyy hh:mm | test_user1 | Update record 1  | checkbox(2) = checked	                  | Option 3                  |
-      | mm/dd/yyyy hh:mm | test_admin | Modify configuration for external module "enhance_reason_for_change_v1.0.1" for project   | reason-for-change-option, highlight-field-when-changed	                                   	|                           |
-      | mm/dd/yyyy hh:mm | test_user1 | Update record 1  | ptname = 'Name1'                         | Default Option 1          |
-      | mm/dd/yyyy hh:mm | test_admin | Modify configuration for external module "enhance_reason_for_change_v1.0.1" for project   | provide-reasons-for-change-dropdown, reason-for-change-option, highlight-field-when-changed	|                           |
-      | mm/dd/yyyy hh:mm | test_admin | Enable external module "enhance_reason_for_change_v1.0.1" for project                     |                                                                                             |                           |
-      | mm/dd/yyyy hh:mm | test_admin | Update record 2  | ptname = 'Name2'                         | Reason 1                  |
+      | mm/dd/yyyy hh:mm | test_admin | Modify configuration for external module "enhance_reason_for_change_v1.0.1" for project | highlight-field-when-changed-style                                                          |                           |
+      | mm/dd/yyyy hh:mm | test_user1 | Update record 1  | [instance = 3], checkbox(2) = checked	  | Option 3                  |
+      | mm/dd/yyyy hh:mm | test_admin | Modify configuration for external module "enhance_reason_for_change_v1.0.1" for project | reason-for-change-option, highlight-field-when-changed	                                   	|                           |
+      | mm/dd/yyyy hh:mm | test_user1 | Update record 1  | [instance = 2], ptname = 'Name1'         | Default Option 1          |
+      | mm/dd/yyyy hh:mm | test_admin | Modify configuration for external module "enhance_reason_for_change_v1.0.1" for project | provide-reasons-for-change-dropdown, reason-for-change-option, highlight-field-when-changed	|                           |
+      | mm/dd/yyyy hh:mm | test_admin | Enable external module "enhance_reason_for_change_v1.0.1" for project                   |                                                                                             |                           |
+      | mm/dd/yyyy hh:mm | test_admin | Update record 2  | [instance = 2], ptname = 'Name2'         | Reason 1                  |
 
     # Disable external module in Control Center
     Given I click on the link labeled "Control Center"
@@ -211,7 +217,7 @@ Feature: E.125.2900 - NonLongitudinal_NonRepeatingInstruments_noDAGS
     Then I should see "Enhance reason for change - v1.0.1"
     When I click on the button labeled "View Usage"
     Then I should see "None"
-    And I should NOT see "E.125.2900"
+    And I should NOT see "E.125.2700"
     And I close the dialog box for the external module "Enhance reason for change"
     And I click on the button labeled "Disable"
     Then I should see "Disable module?"
