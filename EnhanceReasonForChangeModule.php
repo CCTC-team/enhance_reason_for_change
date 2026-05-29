@@ -214,6 +214,13 @@ EOT;
             return;
         }
 
+        // Check if code already exists
+        $fullContents = implode('', $file_contents);
+        if (strpos($fullContents, $insertCode) !== false) {
+            $this->log('Code already exists in file', ['path' => $this->getFilePath()]);
+            return;
+        }
+
         $found = false;
         $searchArray = explode("\n", $searchTerm);
         $matched = 0;
@@ -599,27 +606,23 @@ if(changeDialog) {
 
             $data = REDCap::getData($params);
 
-            $isRepeatingForm = !empty($data[$record]['repeat_instances']);
+            $isRepeatingForm  = $Proj->isRepeatingForm($event_id, $instrument);
+            $isRepeatingEvent = $Proj->isRepeatingEvent($event_id);
 
-            if(!$isRepeatingForm) {
-                $thisFormData = $data[$record][$event_id];
-            } else {
-                //the structure of the array depends on project settings and existing instances of the form
-                if(!empty($data[$record]['repeat_instances'][$event_id])){
-                    if(!empty($data[$record]['repeat_instances'][$event_id][$instrument])){
-                        if(!empty($data[$record]['repeat_instances'][$event_id][$instrument][$repeat_instance])) {
-                            $thisFormData = $data[$record]['repeat_instances'][$event_id][$instrument][$repeat_instance];
-                        } else {
-                            //set the default new value that is given when new forms shown i.e. 0 for Incomplete
-                            $thisFormData["{$instrument}_complete"] = 0;
-                        }
-                    } else {
-                        //the form name is not always given when only one form
-                        $thisFormData = $data[$record]['repeat_instances'][$event_id][''][$repeat_instance];
-                    }
+            if (!$isRepeatingForm && !$isRepeatingEvent) {
+                $thisFormData = $data[$record][$event_id] ?? [];
+            } else if ($isRepeatingForm) {
+                // repeating form: instances keyed under [instrument]
+                $instances = $data[$record]['repeat_instances'][$event_id][$instrument] ?? [];
+                if (!empty($instances[$repeat_instance])) {
+                    $thisFormData = $instances[$repeat_instance];
                 } else {
-                    $thisFormData = $data[$record][''][$event_id][$instrument][$repeat_instance];
+                    // form not saved at this instance yet — default to Incomplete
+                    $thisFormData["{$instrument}_complete"] = 0;
                 }
+            } else {
+                // repeating event: instances keyed under '' (empty string)
+                $thisFormData = $data[$record]['repeat_instances'][$event_id][''][$repeat_instance] ?? [];
             }
 
             //adds the event listener for every field
