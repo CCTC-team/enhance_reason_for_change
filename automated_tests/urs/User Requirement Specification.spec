@@ -28,3 +28,4 @@ E.125.2700 – The system shall support the integration of the Enhance Reason Fo
 E.125.2800 – The system shall support the integration of the Enhance Reason For Change external module for Non-longitudinal projects utilizing Non-repeating Instruments and with DAGs.
 E.125.2900 – The system shall support the integration of the Enhance Reason For Change external module for Non-longitudinal projects utilizing Non-repeating Instruments and without DAGs.
 E.125.3000 - The system shall support the ability to configure 'Module configuration permissions in projects' for Enhance reason for change external module.
+E.125.3100 - The system shall record every configuration change (who changed which setting, when, and from what value to what) for the Enhance reason for change external module to the module's View Logs page.
