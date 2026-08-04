@@ -65,9 +65,57 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
       | old_value | (empty)                      |
       | new_value | 1                            |
 
-  Scenario: First project configuration save logs the initial values
+  Scenario: A repeatable left blank is not logged as a change
+    # Regression guard for the phantom-diff bug: REDCap returns a repeatable the
+    # admin never filled as an array of empty entries ([null]), not as null, so a
+    # naive comparison logged "(empty) -> [null]" for a setting nobody touched.
+    # reason-for-change-option is an optional repeatable, so it can reach the save
+    # handler blank -- this module is directly exposed.
+    #
+    # A fresh project is required: the phantom only appears on the FIRST save,
+    # when there is no prior snapshot to diff against.
     Given I login to REDCap with the user "Test_Admin"
-    And I create a new project named "E.125.3100" by clicking on "New Project" in the menu bar, selecting "Practice / Just for fun" from the dropdown, choosing file "fixtures/cdisc_files/Project_redcap_val_nodata.xml", and clicking the "Create Project" button
+    When I click on the link labeled "My Projects"
+    And I create a new project named "E.125.3100.100" by clicking on "New Project" in the menu bar, selecting "Practice / Just for fun" from the dropdown, choosing file "fixtures/cdisc_files/Project_redcap_val_nodata.xml", and clicking the "Create Project" button
+    And I click on the link labeled "Manage"
+    Then I should see "External Modules - Project Module Manager"
+    When I click on the button labeled "Enable a module"
+    And I click on the button labeled "Enable" in the row labeled "Enhance reason for change - v1.1.1"
+    Then I should see "Enhance reason for change - v1.1.1"
+
+    # Tick ONLY the checkbox, the FIRST key in config.json order. Leave the
+    # repeatable option list (key 2) and the remaining settings untouched.
+    Given I click on the button labeled "Configure"
+    Then I should see "Configure Module"
+    When I check the checkbox labeled "When checked, a dropdown of reasons for change will be available for the user to select from"
+    And I click on the button labeled "Save"
+    Then I should see "Enhance reason for change - v1.1.1"
+
+    #VERIFY - exactly one setting was logged, and it is the checkbox.
+    # This assertion is order-based: the hook logs in config.json order and View
+    # Logs shows newest first, so the blank repeatable (key 2) would be NEWER than
+    # the checkbox (key 1). If the phantom ever returns, the first button here
+    # becomes reason-for-change-option and this scenario fails.
+    When I click on the link labeled "View Logs"
+    Then I should see "External Module Logs"
+    And I should see 1 row in the external modules logs table
+    And I should see a table header and row containing the following values in a table:
+      | Module                    | Message                         | UserName   |
+      | enhance_reason_for_change | Configuration changed (project) | Test_Admin |
+
+    When I click on the first button labeled "Show Parameters"
+    Then I should see "Log Entry Parameters"
+    And I should see a table header and row containing the following values in a table:
+      | Name      | Value                               |
+      | setting   | provide-reasons-for-change-dropdown |
+      | old_value | (empty)                             |
+      | new_value | 1                                   |
+    And I click on the button labeled "Close"
+    Then I should see "External Module Logs"
+
+  Scenario: First project configuration save logs the initial values
+    Given I click on the link labeled "My Projects"
+    And I create a new project named "E.125.3100.200" by clicking on "New Project" in the menu bar, selecting "Practice / Just for fun" from the dropdown, choosing file "fixtures/cdisc_files/Project_redcap_val_nodata.xml", and clicking the "Create Project" button
     And I click on the link labeled "Manage"
     Then I should see "External Modules - Project Module Manager"
     When I click on the button labeled "Enable a module"
@@ -108,13 +156,14 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
       | setting   | provide-reasons-for-change-dropdown |
       | old_value | (empty)                             |
       | new_value | 1                                   |
+    And I click on the button labeled "Close"
+    Then I should see "External Module Logs"
 
   Scenario: Changing a setting logs an old->new audit entry
     # rctf starts each scenario from a clean browser page, so re-navigate to the
     # project fresh (same pattern as the other continuation scenarios).
-    Given I login to REDCap with the user "Test_Admin"
-    When I click on the link labeled "My Projects"
-    And I click on the link labeled "E.125.3100"
+    Given I click on the link labeled "My Projects"
+    And I click on the link labeled "E.125.3100.200"
     And I click on the link labeled "Manage"
     Then I should see "External Modules - Project Module Manager"
     And I should see "Enhance reason for change - v1.1.1"
@@ -151,6 +200,7 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
     When I click on the button labeled "Disable module"
     Then I should NOT see "Enhance reason for change - v1.1.1"
 
+  Scenario: Verify no exceptions are thrown in the system
     # Verify no exceptions are thrown in the system
     Given I open Email
     Then I should NOT see an email with subject "REDCap External Module Hook Exception - enhance_reason_for_change"
