@@ -98,7 +98,7 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
     # becomes reason-for-change-option and this scenario fails.
     When I click on the link labeled "View Logs"
     Then I should see "External Module Logs"
-    And I should see 1 row in the external modules logs table
+    And I should see 1 row in the external module logs table
     And I should see a table header and row containing the following values in a table:
       | Module                    | Message                         | UserName   |
       | enhance_reason_for_change | Configuration changed (project) | Test_Admin |
