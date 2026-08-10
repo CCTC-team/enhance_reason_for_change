@@ -39,7 +39,7 @@ Feature: The system shall allow the configuration of project-level default dropd
     # Enable reason for change
     When I click on the link labeled "Setup"
     And I click on the button labeled "Additional customizations"
-    And I check the checkbox labeled Require a 'reason' when making changes to existing records in additional customizations
+    And I check the checkbox labeled "Require a 'reason' when making changes to existing records"
     Then I click on the button labeled "Save"
 
     # Non-repeating event
