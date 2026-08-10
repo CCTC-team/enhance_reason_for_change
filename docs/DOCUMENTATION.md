@@ -81,6 +81,17 @@ Validates configuration when settings are saved:
 - Ensures at least one setting is configured
 - Applies text capacity and dropdown changes based on settings
 
+### `redcap_module_save_configuration($project_id)`
+Records every configuration change to the module's **View Logs** page (the configuration audit log):
+- Diffs the submitted settings against the values held before the save and writes one
+  `Configuration changed (<scope>)` entry per changed key
+- Carries the setting name and its old and new values as log parameters, which REDCap shows to super-users via the
+  **Show Parameters** button
+- Derives scope from whether `$project_id` is empty, so the Control Center dialog logs `(system)` and a project's
+  dialog logs `(project)`; each scope diffs only its own settings, so the two never collide
+- Diffs the first save against an empty baseline, so initial values are logged as `(empty) -> value`; settings left
+  blank are not logged
+
 ### `redcap_data_entry_form($project_id, $record, $instrument, $event_id, $group_id, $repeat_instance)`
 Called when a data entry form is displayed:
 - Validates project configuration
