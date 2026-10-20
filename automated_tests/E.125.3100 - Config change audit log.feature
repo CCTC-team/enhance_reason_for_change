@@ -9,14 +9,14 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
     When I click on the link labeled "Control Center"
     And I click on the link labeled "Manage"
     Then I should see "External Modules - Module Manager"
-    And I should NOT see "Enhance reason for change - v1.1.1"
+    And I should NOT see "Enhance reason for change - v1.1.2"
     When I click on the button labeled "Enable a module"
     And I wait for 2 seconds
     Then I should see "Available Modules"
     And I click on the button labeled "Enable" in the row labeled "Enhance reason for change"
     And I wait for 1 second
     And I click on the button labeled "Enable"
-    Then I should see "Enhance reason for change - v1.1.1"
+    Then I should see "Enhance reason for change - v1.1.2"
 
   Scenario: First system configuration save logs the initial values
     # This module carries system-scope settings as well as project-scope ones, so
@@ -26,14 +26,14 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
     When I click on the link labeled "Control Center"
     And I click on the link labeled "Manage"
     Then I should see "External Modules - Module Manager"
-    And I should see "Enhance reason for change - v1.1.1"
+    And I should see "Enhance reason for change - v1.1.2"
 
     Given I click on the button labeled "Configure"
     Then I should see "Configure Module"
     When I check the checkbox labeled "When checked, the text capacity in the reason for change free text box changes"
     And I enter "Sys Option 1" into the input field labeled "1. Provides a default option for the reason for change dropdown"
     And I click on the button labeled "Save"
-    Then I should see "Enhance reason for change - v1.1.1"
+    Then I should see "Enhance reason for change - v1.1.2"
 
     #VERIFY - the audit trail on the module's own View Logs page
     When I click on the link labeled "View Logs"
@@ -80,8 +80,8 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
     And I click on the second link labeled "Manage"
     Then I should see "External Modules - Project Module Manager"
     When I click on the button labeled "Enable a module"
-    And I click on the button labeled "Enable" in the row labeled "Enhance reason for change - v1.1.1"
-    Then I should see "Enhance reason for change - v1.1.1"
+    And I click on the button labeled "Enable" in the row labeled "Enhance reason for change - v1.1.2"
+    Then I should see "Enhance reason for change - v1.1.2"
 
     # Tick ONLY the checkbox, the FIRST key in config.json order. Leave the
     # repeatable option list (key 2) and the remaining settings untouched.
@@ -89,7 +89,7 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
     Then I should see "Configure Module"
     When I check the checkbox labeled "When checked, a dropdown of reasons for change will be available for the user to select from"
     And I click on the button labeled "Save"
-    Then I should see "Enhance reason for change - v1.1.1"
+    Then I should see "Enhance reason for change - v1.1.2"
 
     #VERIFY - exactly one setting was logged, and it is the checkbox.
     # This assertion is order-based: the hook logs in config.json order and View
@@ -119,15 +119,15 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
     And I click on the second link labeled "Manage"
     Then I should see "External Modules - Project Module Manager"
     When I click on the button labeled "Enable a module"
-    And I click on the button labeled "Enable" in the row labeled "Enhance reason for change - v1.1.1"
-    Then I should see "Enhance reason for change - v1.1.1"
+    And I click on the button labeled "Enable" in the row labeled "Enhance reason for change - v1.1.2"
+    Then I should see "Enhance reason for change - v1.1.2"
 
     Given I click on the button labeled "Configure"
     Then I should see "Configure Module"
     When I check the checkbox labeled "When checked, a dropdown of reasons for change will be available for the user to select from"
     And I enter "Option A" into the input field labeled "1. Provide an option for the reason for change dropdown"
     And I click on the button labeled "Save"
-    Then I should see "Enhance reason for change - v1.1.1"
+    Then I should see "Enhance reason for change - v1.1.2"
 
     #VERIFY - the audit trail on the module's own View Logs page
     When I click on the link labeled "View Logs"
@@ -166,13 +166,13 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
     And I click on the link labeled "E.125.3100.200"
     And I click on the second link labeled "Manage"
     Then I should see "External Modules - Project Module Manager"
-    And I should see "Enhance reason for change - v1.1.1"
+    And I should see "Enhance reason for change - v1.1.2"
 
     When I click on the button labeled "Configure"
     Then I should see "Configure Module"
     And I clear field and enter "Option B" into the input field labeled "1. Provide an option for the reason for change dropdown"
     Then I click on the button labeled "Save"
-    And I should see "Enhance reason for change - v1.1.1"
+    And I should see "Enhance reason for change - v1.1.2"
 
     #VERIFY - the audit trail on the module's own View Logs page
     When I click on the link labeled "View Logs"
@@ -198,7 +198,7 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
     And I click on the button labeled "Disable"
     Then I should see "Disable module?"
     When I click on the button labeled "Disable module"
-    Then I should NOT see "Enhance reason for change - v1.1.1"
+    Then I should NOT see "Enhance reason for change - v1.1.2"
 
   Scenario: Verify no exceptions are thrown in the system
     # Verify no exceptions are thrown in the system
