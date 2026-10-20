@@ -55,7 +55,11 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
     And I should see a table header and row containing the following values in a table:
       | Name      | Value                       |
       | setting   | sys-reason-for-change-option |
+    And I should see a table header and row containing the following values in a table:
+      | Name      | Value                       |
       | new_value | ["Sys Option 1"]            |
+    And I should see a table header and row containing the following values in a table:
+      | Name      | Value                       |
       | old_value | (empty)                     |
     And I click on the button labeled "Close"
     Then I should see "External Module Logs"
@@ -65,7 +69,11 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
     And I should see a table header and row containing the following values in a table:
       | Name      | Value                        |
       | setting   | enlarge-reason-text-capacity |
+    And I should see a table header and row containing the following values in a table:
+      | Name      | Value                        |
       | new_value | 1                            |
+    And I should see a table header and row containing the following values in a table:
+      | Name      | Value                        |
       | old_value | (empty)                      |
 
   Scenario: A repeatable left blank is not logged as a change
@@ -111,7 +119,11 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
     And I should see a table header and row containing the following values in a table:
       | Name      | Value                               |
       | setting   | provide-reasons-for-change-dropdown |
+    And I should see a table header and row containing the following values in a table:
+      | Name      | Value                               |
       | new_value | 1                                   |
+    And I should see a table header and row containing the following values in a table:
+      | Name      | Value                               |
       | old_value | (empty)                             |
     And I click on the button labeled "Close"
     Then I should see "External Module Logs"
@@ -147,7 +159,11 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
     And I should see a table header and row containing the following values in a table:
       | Name      | Value                    |
       | setting   | reason-for-change-option |
+    And I should see a table header and row containing the following values in a table:
+      | Name      | Value                    |
       | new_value | ["Option A"]             |
+    And I should see a table header and row containing the following values in a table:
+      | Name      | Value                    |
       | old_value | (empty)                  |
     And I click on the button labeled "Close"
     Then I should see "External Module Logs"
@@ -157,7 +173,11 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
     And I should see a table header and row containing the following values in a table:
       | Name      | Value                               |
       | setting   | provide-reasons-for-change-dropdown |
+    And I should see a table header and row containing the following values in a table:
+      | Name      | Value                               |
       | new_value | 1                                   |
+    And I should see a table header and row containing the following values in a table:
+      | Name      | Value                               |
       | old_value | (empty)                             |
     And I click on the button labeled "Close"
     Then I should see "External Module Logs"
@@ -189,7 +209,11 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
     And I should see a table header and row containing the following values in a table:
       | Name      | Value                    |
       | setting   | reason-for-change-option |
+    And I should see a table header and row containing the following values in a table:
+      | Name      | Value                    |
       | new_value | ["Option B"]             |
+    And I should see a table header and row containing the following values in a table:
+      | Name      | Value                    |
       | old_value | ["Option A"]             |
     And I click on the button labeled "Close"
     Then I should see "External Module Logs"
