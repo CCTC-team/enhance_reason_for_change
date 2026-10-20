@@ -15,13 +15,6 @@ Feature: E.125.2900 - NonLongitudinal_NonRepeatingInstruments_noDAGS
 
     Given I click on the link labeled "Manage"
     Then I should see "External Modules - Module Manager"
-    And I should NOT see "Enhance reason for change - v1.1.2"
-    When I click on the button labeled "Enable a module"
-    And I wait for 2 seconds
-    Then I should see "Available Modules"
-    And I click on the button labeled "Enable" in the row labeled "Enhance reason for change"
-    And I wait for 1 second
-    And I click on the button labeled "Enable"
     Then I should see "Enhance reason for change - v1.1.2"
 
     # E.125.700
@@ -229,7 +222,6 @@ Feature: E.125.2900 - NonLongitudinal_NonRepeatingInstruments_noDAGS
       | mm/dd/yyyy hh:mm | test_admin | Modify configuration for external module "enhance_reason_for_change_v1.1.2" for project | 
       | mm/dd/yyyy hh:mm | test_admin | Enable external module "enhance_reason_for_change_v1.1.2" for project                   | 
       | mm/dd/yyyy hh:mm | test_admin | Modify configuration for external module "enhance_reason_for_change_v1.1.2" for system  | 
-      | mm/dd/yyyy hh:mm | test_admin | Enable external module "enhance_reason_for_change_v1.1.2" for system                    |    
 
     And I logout
 
