@@ -3,7 +3,7 @@ Feature: E.125.2500 - RepeatingInstruments_SingleArm_noDAGs
   As a REDCap end user
   I want to see that Enhance reason for change is functioning as expected
 
-  Scenario: Verify external module is enabled in Control Center
+  Scenario: Enable external Module from Control Center
     Given I login to REDCap with the user "Test_Admin"
     When I click on the link labeled "Control Center"
     # EMAIL ADDRESS SET FOR REDCAP ADMIN - without it, emails are not send out from system
