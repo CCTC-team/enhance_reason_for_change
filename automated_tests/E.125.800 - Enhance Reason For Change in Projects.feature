@@ -52,7 +52,7 @@ Feature: The system shall allow the configuration of project-level default dropd
     And I enter "Reason 1" into the textarea field labeled "Reason for changes:"
     And I click on the button labeled "Save"
 
-    Given I click on the link labeled "Manage"
+    Given I click on the second link labeled "Manage"
     Then I should see "External Modules - Project Module Manager"
     And I should NOT see "Enhance reason for change - v1.1.1"
     When I click on the button labeled "Enable a module"
@@ -78,7 +78,7 @@ Feature: The system shall allow the configuration of project-level default dropd
     And I click on the button labeled "Save"
 
   Scenario: Verify different configuration settings
-    Given I click on the link labeled "Manage"
+    Given I click on the second link labeled "Manage"
     When I click on the button labeled "Configure"
     Then I should see "Configure Module"
     # E.125.800
@@ -102,7 +102,7 @@ Feature: The system shall allow the configuration of project-level default dropd
     And I select "Option 3" on the dropdown field labeled "Reason for changes"
     And I click on the button labeled "Save"
 
-    Given I click on the link labeled "Manage"
+    Given I click on the second link labeled "Manage"
     When I click on the button labeled "Configure"
     Then I should see "Configure Module"
     # E.125.1000
@@ -137,7 +137,7 @@ Feature: The system shall allow the configuration of project-level default dropd
     And I click on the link labeled "E.125.800"
 
     #VERIFY - E.125.1100 - Only Super-users can configure external Module
-    Given I click on the link labeled "Manage"
+    Given I click on the second link labeled "Manage"
     Then I should see "Enhance reason for change - v1.1.1"
     #And I should NOT see the button labeled "Disable"
     When I click on the button labeled "Configure"
@@ -168,7 +168,7 @@ Feature: The system shall allow the configuration of project-level default dropd
     And I click on the link labeled "E.125.800"
 
     # Disable external module in project E.125.800
-    Given I click on the link labeled "Manage"
+    Given I click on the second link labeled "Manage"
     Then I should see "External Modules - Project Module Manager"
     And I should see "Enhance reason for change - v1.1.1"
     When I click on the button labeled "Disable"

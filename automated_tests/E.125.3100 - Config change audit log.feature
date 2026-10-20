@@ -52,8 +52,8 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
     And I should see a table header and row containing the following values in a table:
       | Name      | Value                       |
       | setting   | sys-reason-for-change-option |
-      | old_value | (empty)                     |
       | new_value | ["Sys Option 1"]            |
+      | old_value | (empty)                     |
     And I click on the button labeled "Close"
     Then I should see "External Module Logs"
 
@@ -62,8 +62,8 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
     And I should see a table header and row containing the following values in a table:
       | Name      | Value                        |
       | setting   | enlarge-reason-text-capacity |
-      | old_value | (empty)                      |
       | new_value | 1                            |
+      | old_value | (empty)                      |
 
   Scenario: A repeatable left blank is not logged as a change
     # Regression guard for the phantom-diff bug: REDCap returns a repeatable the
@@ -77,7 +77,7 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
     Given I login to REDCap with the user "Test_Admin"
     When I click on the link labeled "My Projects"
     And I create a new project named "E.125.3100.100" by clicking on "New Project" in the menu bar, selecting "Practice / Just for fun" from the dropdown, choosing file "fixtures/cdisc_files/Project_redcap_val_nodata.xml", and clicking the "Create Project" button
-    And I click on the link labeled "Manage"
+    And I click on the second link labeled "Manage"
     Then I should see "External Modules - Project Module Manager"
     When I click on the button labeled "Enable a module"
     And I click on the button labeled "Enable" in the row labeled "Enhance reason for change - v1.1.1"
@@ -108,15 +108,15 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
     And I should see a table header and row containing the following values in a table:
       | Name      | Value                               |
       | setting   | provide-reasons-for-change-dropdown |
-      | old_value | (empty)                             |
       | new_value | 1                                   |
+      | old_value | (empty)                             |
     And I click on the button labeled "Close"
     Then I should see "External Module Logs"
 
   Scenario: First project configuration save logs the initial values
     Given I click on the link labeled "My Projects"
     And I create a new project named "E.125.3100.200" by clicking on "New Project" in the menu bar, selecting "Practice / Just for fun" from the dropdown, choosing file "fixtures/cdisc_files/Project_redcap_val_nodata.xml", and clicking the "Create Project" button
-    And I click on the link labeled "Manage"
+    And I click on the second link labeled "Manage"
     Then I should see "External Modules - Project Module Manager"
     When I click on the button labeled "Enable a module"
     And I click on the button labeled "Enable" in the row labeled "Enhance reason for change - v1.1.1"
@@ -144,8 +144,8 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
     And I should see a table header and row containing the following values in a table:
       | Name      | Value                    |
       | setting   | reason-for-change-option |
-      | old_value | (empty)                  |
       | new_value | ["Option A"]             |
+      | old_value | (empty)                  |
     And I click on the button labeled "Close"
     Then I should see "External Module Logs"
 
@@ -154,8 +154,8 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
     And I should see a table header and row containing the following values in a table:
       | Name      | Value                               |
       | setting   | provide-reasons-for-change-dropdown |
-      | old_value | (empty)                             |
       | new_value | 1                                   |
+      | old_value | (empty)                             |
     And I click on the button labeled "Close"
     Then I should see "External Module Logs"
 
@@ -164,7 +164,7 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
     # project fresh (same pattern as the other continuation scenarios).
     Given I click on the link labeled "My Projects"
     And I click on the link labeled "E.125.3100.200"
-    And I click on the link labeled "Manage"
+    And I click on the second link labeled "Manage"
     Then I should see "External Modules - Project Module Manager"
     And I should see "Enhance reason for change - v1.1.1"
 
@@ -186,8 +186,8 @@ Feature: E.125.3100 - The system shall record configuration changes for the Enha
     And I should see a table header and row containing the following values in a table:
       | Name      | Value                    |
       | setting   | reason-for-change-option |
-      | old_value | ["Option A"]             |
       | new_value | ["Option B"]             |
+      | old_value | ["Option A"]             |
     And I click on the button labeled "Close"
     Then I should see "External Module Logs"
 

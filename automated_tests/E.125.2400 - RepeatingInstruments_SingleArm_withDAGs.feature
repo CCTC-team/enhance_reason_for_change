@@ -70,7 +70,7 @@ Feature: E.125.2400 - RepeatingInstruments_SingleArm_withDAGs
     When I click on the button labeled "Assign"
     Then I should see "Test User1" within the "DataEntryPI" row of the column labeled "Username" of the User Rights table
 
-    Given I click on the link labeled "Manage"
+    Given I click on the second link labeled "Manage"
     Then I should see "External Modules - Project Module Manager"
     And I should NOT see "Enhance reason for change - v1.1.1"
     When I click on the button labeled "Enable a module"
@@ -107,7 +107,7 @@ Feature: E.125.2400 - RepeatingInstruments_SingleArm_withDAGs
     Given I login to REDCap with the user "Test_Admin"
     When I click on the link labeled "My Projects"
     And I click on the link labeled "E.125.2400"
-    When I click on the link labeled "Manage"
+    When I click on the second link labeled "Manage"
     And I click on the button labeled "Configure"
     Then I should see "Configure Module"
     # E.125.2400
@@ -138,7 +138,7 @@ Feature: E.125.2400 - RepeatingInstruments_SingleArm_withDAGs
     Given I login to REDCap with the user "Test_Admin"
     When I click on the link labeled "My Projects"
     And I click on the link labeled "E.125.2400"
-    When I click on the link labeled "Manage"
+    When I click on the second link labeled "Manage"
     And I click on the button labeled "Configure"
     Then I should see "Configure Module"
     # E.125.1000
@@ -171,7 +171,7 @@ Feature: E.125.2400 - RepeatingInstruments_SingleArm_withDAGs
     And I click on the button labeled "Save"
 
     #VERIFY - E.125.1100 - Only Super-users can configure external Module
-    Given I click on the link labeled "Manage"
+    Given I click on the second link labeled "Manage"
     Then I should see "Enhance reason for change - v1.1.1"
     #And I should NOT see the button labeled "Disable"
     When I click on the button labeled "Configure"
@@ -191,7 +191,7 @@ Feature: E.125.2400 - RepeatingInstruments_SingleArm_withDAGs
     And I click on the link labeled "E.125.2400"
 
     # Disable external module in project E.125.2400
-    Given I click on the link labeled "Manage"
+    Given I click on the second link labeled "Manage"
     Then I should see "External Modules - Project Module Manager"
     And I should see "Enhance reason for change - v1.1.1"
     When I click on the button labeled "Disable"
