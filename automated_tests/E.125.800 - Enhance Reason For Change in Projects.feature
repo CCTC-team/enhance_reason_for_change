@@ -72,7 +72,7 @@ Feature: The system shall allow the configuration of project-level default dropd
     # E.125.1200, E.125.1300: Repeating Instrument - instance 2, Arm 1
     Given I click on the link labeled "Record Status Dashboard"
     And I click on the link labeled "2"
-    And I click on the icon in the column labeled "" and the row labeled "2"
+    And I click on the link in the column labeled "" and the row labeled "2"
     And I clear field and enter "Name1" into the input field labeled "Name"
     And I select the submit option labeled "Save & Stay" on the Data Collection Instrument
     Then I should NOT see the field labeled "Name" with a colored right border
@@ -156,7 +156,7 @@ Feature: The system shall allow the configuration of project-level default dropd
     # E.125.1200, E.125.1300: Repeating Instrument - instance 1, Arm 1
     Given I click on the link labeled "Record Status Dashboard"
     And I click on the link labeled "1"
-    And I click on the icon in the column labeled "" and the row labeled "1"
+    And I click on the link in the column labeled "" and the row labeled "1"
     And I check the checkbox labeled "Checkbox2"
     Then I should see the field labeled "Checkbox" with a 4px "dashed" right border in "blue" color
     And I select the submit option labeled "Save & Stay" on the Data Collection Instrument
