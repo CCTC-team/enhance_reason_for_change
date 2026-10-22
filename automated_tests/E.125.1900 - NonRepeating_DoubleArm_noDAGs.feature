@@ -204,7 +204,7 @@ Feature: E.125.1900 - NonRepeating_DoubleArm_noDAGs
       | mm/dd/yyyy hh:mm | test_admin | Modify configuration for external module "enhance_reason_for_change_v1.1.2" for project | highlight-field-when-changed-style                                                          |                           |
       | mm/dd/yyyy hh:mm | test_user1 | Update record 1 (Event 1 (Arm 1: Arm 1)) | checkbox(2) = checked	                      | Option 3                  |
       | mm/dd/yyyy hh:mm | test_admin | Modify configuration for external module "enhance_reason_for_change_v1.1.2" for project | reason-for-change-option, highlight-field-when-changed	                                   	|                           |
-      | mm/dd/yyyy hh:mm | test_user1 | Update record 1 (Event 1 (Arm 1: Arm 1)) | ptname = 'Name1'                             | Default Option 1          |
+      | mm/dd/yyyy hh:mm | test_user1 | Update record 1 (Event 1 (Arm 1: Arm 1)) | ptname_v2 = 'Name1'                             | Default Option 1          |
       | mm/dd/yyyy hh:mm | test_admin | Modify configuration for external module "enhance_reason_for_change_v1.1.2" for project | provide-reasons-for-change-dropdown, reason-for-change-option, highlight-field-when-changed	|                           |
       | mm/dd/yyyy hh:mm | test_admin | Enable external module "enhance_reason_for_change_v1.1.2" for project                   |                                                                                             |                           |
       | mm/dd/yyyy hh:mm | test_admin | Update record 1 (Event 2 (Arm 1: Arm 1)) | ptname_v2 = 'Name2'                          | Reason 1                  |
