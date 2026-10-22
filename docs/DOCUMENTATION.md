@@ -12,11 +12,15 @@
 - **Richard Hardy** - University of Cambridge - Cambridge Cancer Trials Centre (rmh54@cam.ac.uk)
 - **Mintoo Xavier** - Cambridge University Hospital - Cambridge Cancer Trials Centre (mintoo.xavier1@nhs.net)
 
-### Compatibility
-| Requirement | Version Range |
-|-------------|---------------|
-| PHP | 8.0.27 - 8.2.29 |
-| REDCap | 13.8.1 - 15.9.1 |
+### Tested With
+The module has been tested with:
+
+| | Versions |
+|---|---|
+| PHP | 8.2 |
+| REDCap | 13.8.1, 14.7.0, 15.5.36, 17.5.6 |
+
+`config.json` sets no PHP or REDCap version limits.
 
 ## Purpose
 
@@ -219,7 +223,6 @@ This ensures the core file modifications are properly removed and reapplied.
 The following items from the Enhancement Plan (see [ENHANCEMENT_PLAN.md](ENHANCEMENT_PLAN.md)) remain for future implementation:
 
 - **Replace Direct Core File Modification** (Plan 1.1) - Refactor to use JavaScript injection via `redcap_data_entry_form` hook instead of modifying `DataEntry/index.php`
-- **Widen Compatibility Range** (Plan 2.1, partial) - Expand PHP max version beyond 8.2.29 and remove REDCap max version cap
 - **Full JavaScript Externalization** (Plan 3.3, partial) - Migrate remaining inline JavaScript from PHP to external `js/` files
 - **Sub-Settings for Reason Categories** (Plan 2.3) - Grouped/categorized reason options
 - **Per-Field Change Reason** (Plan 4.1) - Separate reasons for each changed field
@@ -258,5 +261,4 @@ enhance_reason_for_change_v1.1.2/
 ## Dependencies
 
 - REDCap External Module Framework v14+
-- PHP 8.0.27+
-- REDCap 13.8.1+
+- Tested with PHP 8.2 and REDCap 13.8.1, 14.7.0, 15.5.36, 17.5.6; no version limits set in `config.json`
