@@ -3,6 +3,7 @@
 namespace CCTC\EnhanceReasonForChangeModule;
 
 use ExternalModules\AbstractExternalModule;
+use ExternalModules\ExternalModules;
 use REDCap;
 
 /**
@@ -36,8 +37,17 @@ class EnhanceReasonForChangeModule extends AbstractExternalModule
     /** @var int Extended character limit */
     private const EXTENDED_CHAR_LIMIT = 5000;
 
+    /** @var int Flags that make json_encode output safe to place inside a script block */
+    private const JS_JSON_FLAGS = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_INVALID_UTF8_SUBSTITUTE;
+
     /** @var string Default highlight style */
     private const DEFAULT_HIGHLIGHT_STYLE = 'solid 2px red';
+
+    /** @var string Comment marking the start of the code inserted into the REDCap source */
+    private const InsertStartComment = "<!-- ****** inserted by Enhance Reasons for Change module ****** -->";
+
+    /** @var string Comment marking the end of the code inserted into the REDCap source */
+    private const InsertEndComment = "<!-- ****** end of insert ****** -->";
 
     /**
      * Search term for locating the change reason popup in REDCap source.
@@ -155,16 +165,14 @@ EOT;
         $this->replaceCharLimit(self::ReplacedCharLimitCode, self::OriginalCharLimitCode);
 
         // Remove the added dropdown code
-        $reasonForChangeOptions = $this->getSystemSetting("sys-reason-for-change-option") ?? [];
-        $insertedCode = $this->makeInsertCode($reasonForChangeOptions);
-        $this->removeCode($insertedCode);
+        $this->removeInsertedCode();
     }
 
     /**
      * Hook: Validates settings when saved
      *
-     * Validates configuration and applies changes to the REDCap source file
-     * when system settings are modified.
+     * The framework calls this before it checks the user's permission to save, so
+     * this must only validate. Source file changes belong in redcap_module_save_configuration.
      *
      * @param array $settings The settings being saved
      * @return string|null Error message or null if valid
@@ -178,13 +186,6 @@ EOT;
                 empty($settings['highlight-field-when-changed'])) {
                 return "Please ensure at least one Enhance Reason For Change External Module setting is configured.";
             }
-        }
-
-        // Handle system settings
-        if (array_key_exists("enlarge-reason-text-capacity", $settings)) {
-            $this->applyTextCapacityChange((bool)$settings['enlarge-reason-text-capacity']);
-            $reasonForChangeOptions = $settings["sys-reason-for-change-option"] ?? [];
-            $this->applyDefaultReasonForChangeDropdown($reasonForChangeOptions, false);
         }
 
         return null;
@@ -254,10 +255,12 @@ EOT;
     /**
      * Removes previously inserted code from the REDCap source file
      *
-     * @param string $removeCode The code block to remove
+     * Finds the code by its start and end comments rather than its contents, because
+     * the contents depend on settings that may already have changed.
+     *
      * @return void
      */
-    private function removeCode(string $removeCode): void
+    private function removeInsertedCode(): void
     {
         if (!file_exists($this->getFilePath())) {
             $this->log('File not found for code removal', ['path' => $this->getFilePath()]);
@@ -270,8 +273,10 @@ EOT;
             return;
         }
 
-        if (str_contains($file_contents, $removeCode)) {
-            $modified_contents = str_replace($removeCode, "", $file_contents);
+        $insertedBlock = '/' . preg_quote(self::InsertStartComment, '/') . '.*?' . preg_quote(self::InsertEndComment, '/') . '\R?/s';
+        $modified_contents = preg_replace($insertedBlock, "", $file_contents);
+
+        if ($modified_contents !== null && $modified_contents !== $file_contents) {
             $result = file_put_contents($this->getFilePath(), $modified_contents);
             if ($result === false) {
                 $this->log('Failed to write file after code removal', ['path' => $this->getFilePath()]);
@@ -320,13 +325,13 @@ EOT;
 </script>";
 
         return
-            "<!-- ****** inserted by Enhance Reasons for Change module ****** -->
+            self::InsertStartComment . "
 <div id='reasons-for-change-container' style='display:none;'>
 <p><small>Choose a standard reason or enter free text. Changing the selection will overwrite existing content.</small></p>
 $selectControl
 $jsToUpdateChangeReason
 </div>
-<!-- ****** end of insert ****** -->" . PHP_EOL;
+" . self::InsertEndComment . PHP_EOL;
     }
 
     /**
@@ -340,13 +345,9 @@ $jsToUpdateChangeReason
      */
     private function applyDefaultReasonForChangeDropdown(?array $reasonForChangeOptions, bool $empty): void
     {
-        // Get from db and build existing code
-        $oldReasonForChangeOptions = $this->getSystemSetting("sys-reason-for-change-option") ?? [];
-        $oldCode = $this->makeInsertCode($oldReasonForChangeOptions);
-
         // Remove first if not empty (updating existing code)
         if (!$empty) {
-            $this->removeCode($oldCode);
+            $this->removeInsertedCode();
         }
 
         // Build new code and apply from new settings
@@ -366,43 +367,46 @@ $jsToUpdateChangeReason
     private function outputHighlightJs(string $highlightStyle): void
     {
         // Sanitize the style to prevent XSS - only allow safe CSS characters
-        $safeStyle = preg_replace('/[^a-zA-Z0-9\s\-#.,()%]/', '', $highlightStyle);
-        $escapedStyle = htmlspecialchars($safeStyle, ENT_QUOTES, 'UTF-8');
+        $safeStyle = preg_replace('/[^a-zA-Z0-9 \-#.,()%]/', '', $highlightStyle);
+        $jsStyle = json_encode($safeStyle, self::JS_JSON_FLAGS);
 
         echo "
             <script type='text/javascript'>
 
                 function HandleUpdate(ele) {
-                    ele.style.borderRight = '{$escapedStyle}';
+                    ele.style.borderRight = {$jsStyle};
                 }
                                 
                 // element validation type is used to determine if the field is autocomplete or not
-                // if it is, need to listen to the blur event not change event 
-                function AddEventListener(qField, elementValidationType, fieldVal) {                    
-                    let fieldTR = document.getElementById(qField + '-tr');                   
-                    
-                    if(elementValidationType === 'autocomplete') {                                                
-                        const dropDownElement = document.querySelector('#rc-ac-input_' + qField);                                                                         
-                        if(dropDownElement) {                              
-                              dropDownElement.addEventListener('blur', function(e) {
-                                //only trigger the ui update if the current value is changed from original fieldVal
-                                if(dropDownElement.value !== fieldVal) {
-                                   HandleUpdate(fieldTR);
-                                }                                
-                              })
-                        }                       
-                    } else {                        
-                        
-                        if(fieldTR && 
+                // if it is, compare the coded value of its dropdown with the value the page loaded with.
+                // jQuery is needed here because REDCap changes the dropdown with jQuery's trigger, which
+                // does not reach listeners added with addEventListener
+                function AddEventListener(qField, elementValidationType) {
+                    let fieldTR = document.getElementById(qField + '-tr');
+
+                    if(elementValidationType === 'autocomplete') {
+                        const dropDown = $('select[name=\"' + qField + '\"]');
+                        const originalValue = dropDown.find('option').filter(function() {
+                            return this.defaultSelected;
+                        }).val() ?? '';
+
+                        dropDown.on('change', function() {
+                            if(dropDown.val() !== originalValue) {
+                                HandleUpdate(fieldTR);
+                            }
+                        });
+                    } else {
+
+                        if(fieldTR &&
                             !(fieldTR.classList.contains('@READONLY') || fieldTR.classList.contains('@HIDDEN'))) {
-                                                                                                    
+
                             fieldTR.addEventListener('change', function(e) {
                                 HandleUpdate(fieldTR);
-                            });                                                    
-                        }                                            
-                    }                    
+                            });
+                        }
+                    }
                 }
-                
+
                 // function to find nearest label whose id gives the field name
                 function getFieldNameFromSourceButton(div, ancestorEle) {                    
                     let ele = div.closest(ancestorEle);
@@ -586,68 +590,12 @@ if(changeDialog) {
             $projFields = array_keys($Proj->metadata);
             $formFields = REDCap::getFieldNames($instrument);
 
-            //gets the fields and element_validation_type and enum for the current form
-            $items = [];
-            foreach (array_intersect($formFields, $projFields) as $formField) {
-                $items[$formField] = [
-                    "element_validation_type" => $Proj->metadata[$formField]["element_validation_type"],
-                    "element_enum" => $Proj->metadata[$formField]["element_enum"],
-                ];
-            }
-
-            //get the data for this form
-            $params =
-                array(
-                    'project_id' => $project_id,
-                    'records' => array($record),
-                    'fields' => array_keys($items),
-                    'events' => array($event_id)
-                );
-
-            $data = REDCap::getData($params);
-
-            $isRepeatingForm  = $Proj->isRepeatingForm($event_id, $instrument);
-            $isRepeatingEvent = $Proj->isRepeatingEvent($event_id);
-
-            if (!$isRepeatingForm && !$isRepeatingEvent) {
-                $thisFormData = $data[$record][$event_id] ?? [];
-            } else if ($isRepeatingForm) {
-                // repeating form: instances keyed under [instrument]
-                $instances = $data[$record]['repeat_instances'][$event_id][$instrument] ?? [];
-                if (!empty($instances[$repeat_instance])) {
-                    $thisFormData = $instances[$repeat_instance];
-                } else {
-                    // form not saved at this instance yet — default to Incomplete
-                    $thisFormData["{$instrument}_complete"] = 0;
-                }
-            } else {
-                // repeating event: instances keyed under '' (empty string)
-                $thisFormData = $data[$record]['repeat_instances'][$event_id][''][$repeat_instance] ?? [];
-            }
-
-            //adds the event listener for every field
+            //adds the event listener for every field on the current form
             echo "<script type='text/javascript'>";
 
-            //add simple event listeners for user interaction
-            foreach ($items as $field=>$arr) {
-                $valType = $arr["element_validation_type"];
-                $fieldEnum = $arr["element_enum"];
-
-                $fieldValue = $thisFormData[$field];
-
-                //if the field is an autocomplete, need to extract the option label from the enum using
-                //the value which is the key
-                if($valType == "autocomplete") {
-                    $associativeArray = [];
-                    $parts = array_map(function($option) { return trim($option); }, explode('\n', $fieldEnum));
-                    foreach ($parts as $item) {
-                        list($key, $value) = explode(", ", $item, 2);
-                        $associativeArray[$key] = $value;
-                    }
-                    $fieldValue = $associativeArray[$fieldValue];
-                }
-
-                echo "AddEventListener('$field', '$valType', '$fieldValue');\n";
+            foreach (array_intersect($formFields, $projFields) as $formField) {
+                $valType = $Proj->metadata[$formField]["element_validation_type"];
+                echo "AddEventListener(" . json_encode($formField, self::JS_JSON_FLAGS) . ", " . json_encode($valType, self::JS_JSON_FLAGS) . ");\n";
             }
 
             //adds the click event to the buttons available via the (M) button so that when a user interacts
@@ -720,13 +668,19 @@ if(changeDialog) {
     /**
      * Hook: Called after this module's configuration is saved
      *
-     * Records every changed setting to the module's View Logs page.
+     * Applies system settings to the REDCap source file, and records every changed
+     * setting to the module's View Logs page.
      *
      * @param int|string|null $project_id The project ID, or null for a system-scope save
      * @return void
      */
     public function redcap_module_save_configuration($project_id): void
     {
+        if (empty($project_id) && ExternalModules::hasSystemSettingsSavePermission()) {
+            $this->applyTextCapacityChange((bool)$this->getSystemSetting("enlarge-reason-text-capacity"));
+            $this->applyDefaultReasonForChangeDropdown($this->getSystemSetting("sys-reason-for-change-option") ?? [], false);
+        }
+
         $this->auditConfigurationChange($project_id);
     }
 
