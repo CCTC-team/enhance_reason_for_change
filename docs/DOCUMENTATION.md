@@ -18,7 +18,7 @@ The module has been tested with:
 | | Versions |
 |---|---|
 | PHP | 8.2 |
-| REDCap | 13.8.1, 14.7.0, 15.5.36, 17.5.6 |
+| REDCap | 13.8.1, 14.7.0, 15.5.36, 17.5.6, 17.5.9 |
 
 `config.json` sets no PHP or REDCap version limits.
 
@@ -261,4 +261,4 @@ enhance_reason_for_change_v1.1.2/
 ## Dependencies
 
 - REDCap External Module Framework v14+
-- Tested with PHP 8.2 and REDCap 13.8.1, 14.7.0, 15.5.36, 17.5.6; no version limits set in `config.json`
+- Tested with PHP 8.2 and REDCap 13.8.1, 14.7.0, 15.5.36, 17.5.6, 17.5.9; no version limits set in `config.json`
