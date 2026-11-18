@@ -46,26 +46,26 @@ Feature: E.125.3200 - The system shall keep change highlighting accurate, shall 
     When I click on the button labeled "Add new record for the arm selected above"
     And I click the bubble to add a record for the "Data Types" longitudinal instrument on event "Event 1"
     And I enter "');window.erfcInjected=1;//" into the data entry form field labeled "Text Box"
-    And I select the submit option labeled "Save & Stay" on the Data Collection Instrument
+    And I save the data entry form with "Save & Stay" and wait for it to reload
     Then I should see "successfully"
     And the text field labeled "Text Box" should have the value "');window.erfcInjected=1;//"
     And the saved value should not have run as script
 
     When I clear field and enter "x\"</script><script>window.erfcInjected=2;</script>" into the input field labeled "Text Box"
-    And I select the submit option labeled "Save & Stay" on the Data Collection Instrument
+    And I save the data entry form with "Save & Stay" and wait for it to reload
     Then I should see "successfully"
     And the saved value should not have run as script
 
   Scenario: Highlighting still works when a saved value contains an apostrophe
     When I clear field and enter "O'Brien" into the input field labeled "Text Box"
-    And I select the submit option labeled "Save & Stay" on the Data Collection Instrument
+    And I save the data entry form with "Save & Stay" and wait for it to reload
     Then I should see "successfully"
     When I change the text field labeled "Text2" to "ABC" without saving
     Then I should see the field labeled "Text2" with a 2px "solid" right border in "red" color
 
   Scenario: An autocomplete label containing an apostrophe is only highlighted when changed
     Given I change the autocomplete field "multiple_dropdown_auto" to "O'Brien" without saving
-    And I select the submit option labeled "Save & Stay" on the Data Collection Instrument
+    And I save the data entry form with "Save & Stay" and wait for it to reload
     Then I should see "successfully"
     And the autocomplete field "multiple_dropdown_auto" should show "O'Brien"
     When I leave the autocomplete field "multiple_dropdown_auto" unchanged
@@ -73,9 +73,12 @@ Feature: E.125.3200 - The system shall keep change highlighting accurate, shall 
     When I change the autocomplete field "multiple_dropdown_auto" to "Plain" without saving
     Then I should see the field labeled "Multiple Choice Dropdown Auto" with a 2px "solid" right border in "red" color
 
+  # Scenario Outline: <shown label> is a placeholder. The scenario runs once for each row of the Examples table below.
+  # Each row is the label as REDCap shows it, not as written in the project XML:
+  #   "T1 <= 3 cm" is shown as "T1 < = 3 cm", "<b>Bold</b> label" as "Bold label", and "A &amp; B" as "A & B"
   Scenario Outline: An unchanged autocomplete field is not highlighted whatever its label contains
     Given I change the autocomplete field "multiple_dropdown_auto" to "<shown label>" without saving
-    And I select the submit option labeled "Save & Stay" on the Data Collection Instrument
+    And I save the data entry form with "Save & Stay" and wait for it to reload
     Then I should see "successfully"
     And the autocomplete field "multiple_dropdown_auto" should show "<shown label>"
     When I leave the autocomplete field "multiple_dropdown_auto" unchanged
@@ -90,7 +93,7 @@ Feature: E.125.3200 - The system shall keep change highlighting accurate, shall 
   Scenario: Clearing an autocomplete field highlights it
     When I clear the autocomplete field "multiple_dropdown_auto" without saving
     Then I should see the field labeled "Multiple Choice Dropdown Auto" with a 2px "solid" right border in "red" color
-    And I select the submit option labeled "Save & Stay" on the Data Collection Instrument
+    And I save the data entry form with "Save & Stay" and wait for it to reload
     Then the field "multiple_dropdown_auto" should have no right border
 
   Scenario: Setting a missing data code on an autocomplete field highlights it
