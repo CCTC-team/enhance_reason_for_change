@@ -51,6 +51,31 @@ Given('the saved value should not have run as script', () => {
 /**
  * @module EnhaceReasonForChange
  * @author Mintoo Xavier <min2xavier@gmail.com>
+ * @example I save the data entry form with {string} and wait for it to reload
+ * @param {string} option - submit option label, e.g. "Save & Stay"
+ * @description saves the form and waits for the new page, so later steps never act on the page being unloaded
+ */
+Given('I save the data entry form with {string} and wait for it to reload', (option) => {
+    cy.window().then((win) => { win.erfcBeforeSave = true })
+    cy.get('tr#__SUBMITBUTTONS__-tr').should('exist').then(($row) => {
+        const mainBtn = $row.find('button:visible').filter((i, el) =>
+            el.id !== 'submit-btn-dropdown' && Cypress.$(el).text().includes(option))
+        if (mainBtn.length) {
+            cy.wrap(mainBtn.first()).click()
+            return
+        }
+        cy.get('#submit-btn-dropdown').click()
+        cy.get('#submit-btn-dropdown').closest('div').find('a').contains(option).should('be.visible').click()
+    })
+    // a new page has no marker, so this passes only once the saved form has loaded
+    cy.window().should((win) => { expect(win.erfcBeforeSave).to.equal(undefined) })
+    cy.document().its('readyState').should('eq', 'complete')
+})
+
+
+/**
+ * @module EnhaceReasonForChange
+ * @author Mintoo Xavier <min2xavier@gmail.com>
  * @example I change the text field labeled {string} to {string} without saving
  * @param {string} label - field label
  * @param {string} value - new value
