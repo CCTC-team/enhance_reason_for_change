@@ -1,6 +1,15 @@
 //Add any of your own step definitions here
 const { Given, defineParameterType } = require('@badeball/cypress-cucumber-preprocessor')
 
+defineParameterType({
+    name: 'emTableName',
+    regexp: /external module logs/
+})
+
+const emTableName = {
+    'external module logs' : '#external-module-logs-wrapper table[id^="DataTables_Table_"]'
+}
+
 
 /**
  * @module EnhaceReasonForChange
@@ -206,5 +215,35 @@ Given('I leave the autocomplete field {string} unchanged', (field) => {
 Given('the field {string} should have no right border', (field) => {
     cy.get('#' + field + '-tr').should(($tr) => {
         expect($tr[0].style.borderRightStyle).to.equal('')
+    })
+})
+
+
+/**
+ * @module ExternalModule
+ * @author Mintoo Xavier <min2xavier@gmail.com>
+ * @example I close the dialog box for the external module {string}
+ * @param {string} name - Name of external module
+ * @description Close the dialog box for the external module
+ */
+Given("I close the dialog box for the external module {string}", (name) => {
+    cy.get('.modal-dialog').contains(name).parents('div[class="modal-header"]').within(() => {
+        cy.get('button[class=close]').click()
+    })
+})
+
+
+/**
+ * @module EnhanceReasonForChange
+ * @author Mintoo Xavier <min2xavier@gmail.com>
+ * @example I should see {int} row(s) in the {emTableName} table
+ * @param {int} num - number of row(s)
+ * @param {string} emTableName - available options: 'external module logs'
+ * @description verifies the table contains the specified number of row(s)
+ */
+Given('I should see {int} row(s) in the {emTableName} table', (num, tableName) => {
+    const element = emTableName[tableName] + ' tbody tr'
+    cy.get(element).its('length').then ((rowCount) => {
+        expect(rowCount).to.be.equal(num)
     })
 })
